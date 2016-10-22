@@ -1,3 +1,6 @@
+// OLD BOT. HISTORICAL PURPOSES.
+
+require('dotenv').config({silent: true})
 const fs = require('fs')
 const Discord = require('discord.js')
 const Client = new Discord.Client()

@@ -1,7 +1,7 @@
 {
   "name": "medkit-bot",
-  "version": "1.0.0",
-  "description": "emerald discord adult identifier",
+  "version": "2.0.0",
+  "description": "emerald discord bot",
   "main": "bot.js",
   "repository": {
     "url": "github.com/genudine/medkit-bot",
@@ -10,6 +10,9 @@
   "author": "Katie Thornhill <kath@splitmedialabs.com>",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^9.3.0"
+    "discord.js": "^9.3.0",
+    "dotenv": "^2.0.0",
+    "immutable": "^3.8.1",
+    "winston": "^2.2.0"
   }
 }
