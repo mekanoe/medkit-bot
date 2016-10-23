@@ -1,3 +1,6 @@
 node_modules
 .env
 .data
+medkit-data.db3
+npm-error.log
+yarn-error.log
