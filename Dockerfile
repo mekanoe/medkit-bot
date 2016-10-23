@@ -16,3 +16,4 @@ CMD ["su-exec", "nodeuser", "pm2", "start", "bot.js", "-i", "0", "--no-daemon"]
 
 WORKDIR /src
 ENV DATA_PATH /data
+COPY . /src
