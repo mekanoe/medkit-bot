@@ -1,7 +1,7 @@
 class Commands {
 	constructor(medkit) {
 		this.medkit = medkit
-		
+		this.defaultModules = ['root', 'admin']
 	}
 
 	register() {
@@ -12,7 +12,11 @@ class Commands {
 	// @event
 	// Handles a Discord->message
 	handler(message) {
-		if (message.author.bot) return
+		if (message.author.bot) {
+			return
+		}
+
+
 	}
 }
 

@@ -34,6 +34,9 @@ class Medkit {
 	// Arguments:
 	// - text str{}
 	glc(text) {
+		console.log(`GLC:\n    ${text}`)
+
+
 		let glcId = this.Data.P.get('globalLogChannel')
 		if (glcId !== "") {
 			this.client.channels.get(glcId).sendMessage(text)

@@ -1,7 +1,8 @@
 class Command {
-	constructor({regex, callback}) {
+	constructor({regex, callback, sources = ['text']}) {
 		this.regex = regex
 		this.callback = callback
+		this.sources = sources
 	}
 
 	match(text) {
