@@ -30,12 +30,55 @@ class ServerContext {
 		this.Medkit.client.channels.get(this.logChannel).sendMessage(text)
 	}
 
+	addModule(module) {
+		this.modules.push(module)
+		return new Promise((resolve, reject) => {
+			this.Medkit.Data.db.run('UPDATE servers SET modules=$modules WHERE server_id = $serverId', {
+				$serverId: this.id,
+				$modules: this.modules.join(',')
+			}, () => {
+				resolve(true)
+			})
+		})
+	}
+
+	rmModule(module) {
+		this.modules = this.modules.filter(m => m !== module)
+		return new Promise((resolve, reject) => {
+			this.Medkit.Data.db.run('UPDATE servers SET modules=$modules WHERE server_id = $serverId', {
+				$serverId: this.id,
+				$modules: this.modules.join(',')
+			}, () => {
+				resolve(true)
+			})
+		})
+	}
+
+	addRole(role, name) {
+		return new Promise((resolve, reject) => {
+			// get role id from name
+			let gr = this.S.roles.find('name', name)
+			if (gr === null) {
+				return reject(new Error('role not found'))
+			}
+
+			this.Medkit.Data.db.run('INSERT OR REPLACE INTO servers_roles(server_id, role_spec, role_id) VALUES (?, ?, ?)', this.id, role, gr.id, (err) => {
+				if (err !== null) return reject(err)
+
+				resolve(true) 
+			})
+
+		})
+	}
+
+	// rmRole(role, name)
+
 	userHasRole(UC, role) {
 		if (this.roles[role] === undefined || UC.GM === null) {
 			return false
 		}
-
-		return UC.GM.roles.has(this.roles[role])
+		console.log("userhasrole", UC)
+		return UC.GM.roles.exists('id', this.roles[role])
 	}
 }
 

@@ -3,5 +3,7 @@ const Medkit = require('./Medkit/Medkit').boot()
 
 Medkit.import(
 	'root',
-	'basic'
+	'admin',
+	'basic',
+	'nsfw'
 )

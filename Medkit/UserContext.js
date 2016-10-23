@@ -16,7 +16,7 @@ class UserContext {
 		if (SC !== null) {
 			this.attachSC(SC)
 		} 
-		
+
 		this._resolvePerms()
 	}
 
@@ -42,7 +42,7 @@ class UserContext {
 			return false
 		}
 
-		return this.SC.userHasRole(this, role)
+		return this.SC.userHasRole({GM: this.GM}, role)
 	}
 
 	isRoot() {
@@ -51,7 +51,8 @@ class UserContext {
 
 	attachSC(SC) {
 		this.SC = SC
-		this.GM = SC.S.members.get(this.U)
+		this.GM = SC.S.members.get(this.U.id)
+		console.log(SC.S.members.array())
 		this._resolvePerms()
 	}
 

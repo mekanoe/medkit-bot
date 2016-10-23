@@ -42,7 +42,7 @@ class Data {
 			needsMigration = true
 		}
 
-		if (process.env.FORCE_RESET === true) {
+		if (process.env.FORCE_RESET === '1') {
 			try {
 				fs.unlinkSync(PATH)
 				console.warn("deleted database")
@@ -111,8 +111,10 @@ class Data {
 				let outObj = {}
 
 				rows.forEach((v) => {
-					outObj[v.role_spec] = role_id
+					outObj[v.role_spec] = v.role_id
 				})
+
+				resolve(outObj)
 			})
 
 		})
@@ -124,11 +126,12 @@ class Data {
 			this.db.get("select * from servers where server_id = ?", id, (err, server) => {
 				if (err) return reject(err)
 
+
 				if (server === undefined) {
 					return resolve(null)
 				}
 
-				server.modules = server.modules.split(',')
+				server.modules = server.modules.split(',').filter(x => x !== '')
 
 				this.getServerRoles(id).then((roles) => {
 					server.roles = roles
@@ -139,6 +142,18 @@ class Data {
 
 			})
 
+		})
+	}
+
+	initServer(SC) {
+		return new Promise((resolve, reject) => {
+			this.db.exec(
+				`INSERT INTO servers (server_id, modules, logChannel) VALUES ('${SC.id}', '', '');`,
+				(err) => {
+					if (err !== null) return reject(err) 
+					resolve(true)
+				}
+			)
 		})
 	}
 

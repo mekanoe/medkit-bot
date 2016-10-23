@@ -159,12 +159,11 @@ class Commands {
 			let UC = new UserContext(this.medkit, message.author)
 			let MC = new MessageContext(this.medkit, message, { UC })
 
-			if (message.guild !== undefined) {
+			if (message.channel.type === 'text' && message.guild !== undefined) {
 				this.medkit.Data.getServer(message.guild.id).then((server) => {
 					let SC = new ServerContext(this.medkit, message.guild)
 
 					if (server === null) {
-						console.log(`server ${message.guild.name} <${message.guild.id}> is uninitialized`)
 					} else {
 						SC.attachData(server)
 					}
@@ -185,15 +184,11 @@ class Commands {
 	////
 	//
 	matcher(cmds, mc) {
-		console.log('testing <', mc.text,'> for commands, have', cmds)
 		cmds.forEach((i) => {
-			console.log(i)
-
 			let {command} = i
-			console.log('testing against', command.regex.source)
 			let match = command.regex.exec(mc.text)
 			if (match !== null) {
-				console.log('passed')
+				console.log(`CMD ${mc.UC.U.username}#${mc.UC.U.discriminator}: ${mc.text}`)
 				command.run({medkit: this.medkit}, mc, match.slice(1))
 				return false
 			}
@@ -230,7 +225,6 @@ class Commands {
 		}
 
 		// clever switch fallthrough.
-		console.log('user perms are', mc.UC.permissions)
 		switch(mc.UC.permissions) {
 			case 0: 
 				cmds = cmds.concat(cmdTree['0'])
@@ -277,6 +271,9 @@ class Commands {
 			return
 		}
 
+		if (message.content === "**debug resolve tree") {
+			console.log(this.prettyPrintGlobalResolveTree())
+		}
 			
 		// a message is acceptable if prefix is *
 		// or if it's a DM.
@@ -287,7 +284,6 @@ class Commands {
 			}
 
 			this.buildContext(message).then((mc) => {
-				
 				let set = []
 				if (this.medkit.__internal.noCache) {
 					// this is a dumb way of not caching, 

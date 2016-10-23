@@ -12,7 +12,8 @@ CREATE TABLE servers (
 CREATE TABLE servers_roles (	-- a fluid one-to-many so we don't have to alter the db
 	server_id TEXT,				-- key from server table
 	role_spec TEXT,				-- nsfw, no_nsfw, admin, etc
-	role_id TEXT				-- ID of the role in Discord
+	role_id TEXT,				-- ID of the role in Discord
+	UNIQUE(server_id, role_spec) ON CONFLICT REPLACE
 );
 
 CREATE INDEX servers_roles_id ON servers_roles (server_id);

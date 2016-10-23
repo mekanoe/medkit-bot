@@ -19,6 +19,50 @@ class RootCmd extends CommandSet {
 				sources: ['dm', 'text']
 			}),
 			new Command({
+				regex: /init server/,
+				usage: 'init server',
+				help: 'Initializes this server in the DB. (This also resets the data.)',
+				callback: (message) => {
+					this.medkit.Data.initServer(message.SC).then(() => {
+						message.reply('Server is initialized. You can do further setup now!')
+					})
+				},
+				sources: ['text']
+			}),
+			new Command({
+				regex: /add module ([a-z]+)/,
+				usage: 'add module',
+				help: 'Adds a service module to the medkit.',
+				callback: (message, matches) => {
+					message.SC.addModule(matches[0])
+					.then(this.medkit.Commands.cache())
+					.then(() => {
+						message.reply(`Module ${matches[0]} added! Check the new stuff with \`*commands\`!`)
+					})
+				},
+				sources: ['text']
+			}),
+			new Command({
+				regex: /rm module ([a-z]+)/,
+				usage: 'rm module',
+				help: 'Adds a service module to the medkit.',
+				callback: (message, matches) => {
+					message.SC.rmModule(matches[0]).then(() => {
+						message.reply(`Module ${matches[0]} removed.`)
+					})
+				},
+				sources: ['text']
+			}),
+			new Command({
+				regex: /get modules/,
+				usage: 'get modules',
+				help: 'Gets the service modules for this server.',
+				callback: (message) => {
+					message.reply(`Enabled modules for this server: ${message.SC.modules.join(', ')}`)
+				},
+				sources: ['text']
+			}),
+			new Command({
 				regex: /glcsay (.*)/,
 				usage: 'glcsay <text>',
 				help: 'Sends a message to the global log channel.',
@@ -28,9 +72,18 @@ class RootCmd extends CommandSet {
 				sources: ['dm', 'text']
 			}),
 			new Command({
+				regex: /set username (.*)/,
+				usage: 'set username <username>',
+				help: 'Sets my username.',
+				callback: (message, matches) => {
+					this.medkit.client.user.setUsername(matches[0])
+				},
+				sources: ['dm', 'text']
+			}),
+			new Command({
 				regex: /recache/,
 				usage: 'recache',
-				help: 'DANGER: Recaches command tree. This is expensive.',
+				help: '**DANGER:** Recaches command tree. This is expensive.',
 				sources: ['dm', 'text'],
 				callback: (message) => {
 					let start = new Date()

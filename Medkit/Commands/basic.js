@@ -19,6 +19,14 @@ class BasicCmd extends CommandSet {
 				sources: ['dm', 'text']
 			}),
 			new Command({
+				regex: /bot/,
+				hidden: true,
+				callback: (message) => {
+					message.reply("Hi! I'm Medkit. I'm a utility bot that fits in your slot. Sponsored by Genudine Dynamics.\n\nAsk <@62601275618889728> for more info.\n*Also see https://github.com/genudine/medkit-bot*")
+				},
+				sources: ['dm', 'text']
+			}),
+			new Command({
 				regex: /commands/,
 				usage: 'commands',
 				help: 'Shows available commands.',
@@ -26,7 +34,7 @@ class BasicCmd extends CommandSet {
 
 					let cmds = this.medkit.Commands.resolver(message)
 
-					let text = "Available commands:\n\n" + cmds.map(cmd => `  - \`${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
+					let text = "Available commands:\n\n" + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
 					message.reply(text)
 				},
 				sources: ['dm', 'text']
