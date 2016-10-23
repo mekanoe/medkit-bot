@@ -1,2 +1,7 @@
 require('dotenv').config({silent: true})
-require('./Medkit/Medkit').boot()
+const Medkit = require('./Medkit/Medkit').boot()
+
+Medkit.import(
+	'root',
+	'basic'
+)

@@ -5,22 +5,57 @@ const ROLE_MOD = 2
 const ROLE_USER = 3
 
 class UserContext {
-	constructor(medkit, server, user) {
-
-		this.SC = server
-		this.U = user
-		this.GM = server.S.member(user)
+	constructor(medkit, user, SC = null) {
 		this.Medkit = medkit
-
+		this.U = user
 		this.permissions = ROLE_USER
+
+		this.SC = null
+		this.GM = null
+
+		if (SC !== null) {
+			this.attachSC(SC)
+		} 
+		
 		this._resolvePerms()
 	}
 
 	_resolvePerms() {
-		if (this.Medkit.getRootUsers().has(this.U.id)) {
+		if (this.isRoot()) {
 			this.permissions = ROLE_ROOT
-		} else if(this.GM.roles.exists())
+			return
+		}
+
+		if (this.hasRole('admin')) {
+			this.permissions = ROLE_ADMIN
+			return
+		}
+
+		if(this.hasRole('mod')) {
+			this.permissions = ROLE_MOD
+			return
+		}
+	}
+
+	hasRole(role) {
+		if (this.SC === null) {
+			return false
+		}
+
+		return this.SC.userHasRole(this, role)
+	}
+
+	isRoot() {
+		return this.Medkit.isRoot(this.U.id)
+	}
+
+	attachSC(SC) {
+		this.SC = SC
+		this.GM = SC.S.members.get(this.U)
+		this._resolvePerms()
 	}
 
 
 }
+
+module.exports = UserContext

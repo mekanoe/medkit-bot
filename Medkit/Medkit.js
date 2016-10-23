@@ -4,28 +4,38 @@ const { Set } = require('immutable')
 
 class Medkit {
 	constructor() {
+		this.__internal = {}
+		this.__internal.importBuffer = []
+
+		// preliminary sanity checks
+		if (process.env.DISCORD_TOKEN === undefined) {
+			throw new Error('DISCORD_TOKEN must be set for any of this to work.')
+		}
+
 		// mount data
 		this.Data = new (require('./Data'))(this)
-		this.Data.recache({sync: true})
+		
+		// Get settings
+		this.Data.getMedkitSettings().then((settings) => {
+			// console.log(settings)
 
-		// setup internal data
-		this.__internal = {}
-		this.__internal.rootUsers = this.getRootUsers()
+			// setup internal data
+			this.__internal.settings = settings
+			this.__internal.rootUsers = this.getRootUsers()
+			this.__internal.processMessages = false
+			this.__internal.profiler = false
+			this.__internal.noCache = false
 
-		// get discord client, mount working stuff
-		this.client = new discord.Client()
+			// get discord client, mount working stuff
+			this.client = new discord.Client()
 
-		this.Commands = new (require('./Commands'))(this)
-		this.Listener = new (require('./Listener'))(this)
+			this.Commands = new (require('./Commands'))(this)
+			this.Listener = new (require('./Listener'))(this)
 
-		// discord login
-		this.client.login(process.env.DISCORD_TOKEN)
-
-		this.Data.commit().then(() => {
-			console.log('config committed')
-		}).catch((err) => {
-			console.log('config commit failed', err)
+			// discord login
+			this.client.login(process.env.DISCORD_TOKEN)
 		})
+
 	}
 
 	////
@@ -37,7 +47,7 @@ class Medkit {
 		console.log(`GLC:\n    ${text}`)
 
 
-		let glcId = this.Data.P.get('globalLogChannel')
+		let glcId = this.__internal.settings.globalLogChannel || ""
 		if (glcId !== "") {
 			this.client.channels.get(glcId).sendMessage(text)
 		}
@@ -55,23 +65,42 @@ class Medkit {
 		}
 	}
 
+	import(...names) {
+		this.__internal.importBuffer = this.__internal.importBuffer.concat(...names)
+	}
+
 	////
 	// @event
 	// Runs whatever's meant to run at Discord->ready
 	readyScript() {
-		console.info('Client is ready.')
+		console.info('client is ready, doing startup tasks')
 		if (process.env.NODE_ENV === 'production') {
 			this.glc(`Started at ${new Date()}`)
 		}
 
-		let status = this.Data.P.get('status').toJS()
-		this.client.user.setStatus(status.state, status.game)
+		console.log(`currently a member of ${this.client.guilds.array().map(v => `${v.name} <${v.id}>`).join(' ,')}`)
+
+		let {status_state, status_game} = this.__internal.settings
+		this.client.user.setStatus(status_state, status_game)
+
+		this.Commands.import.apply(this.Commands, this.__internal.importBuffer)
+		this.Commands.cache().then(() => {
+			// console.log(this.Commands.prettyPrintGlobalResolveTree())
+			this.__internal.processMessages = true
+			console.log('command cache finished.')
+
+			console.log('all done, processing messages.')
+		})
 	}
 
 	////
 	// Memoizing root users getter.
 	getRootUsers() {
 		return this.__internal.rootUsers || Set((process.env.ROOT_USERS || "").split(','))
+	}
+
+	isRoot(id) {
+		return this.getRootUsers().has(id)
 	}
 }
 
