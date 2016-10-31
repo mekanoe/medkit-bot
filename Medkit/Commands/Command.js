@@ -1,6 +1,6 @@
 class Command {
 	constructor({regex, callback, usage, hidden = false, module = "", help, sources = ['text']}) {
-		this.regex = regex
+		this.regex = new RegExp(`^${regex.source}`, regex.flags)
 		this.callback = callback
 		this.sources = sources
 		this.usage = usage || regex.source
