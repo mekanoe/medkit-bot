@@ -52,7 +52,6 @@ class UserContext {
 	attachSC(SC) {
 		this.SC = SC
 		this.GM = SC.S.members.get(this.U.id)
-		console.log(SC.S.members.array())
 		this._resolvePerms()
 	}
 
