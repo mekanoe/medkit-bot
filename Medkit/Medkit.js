@@ -1,5 +1,4 @@
 const discord = require('discord.js')
-const winston = require('winston')
 const { Set } = require('immutable')
 
 class Medkit {
@@ -54,7 +53,7 @@ class Medkit {
 	}
 
 	////
-	// Send a message to the global log channel
+	// Send a message to the local log channel
 	//
 	// Arguments:
 	// - text str{}
