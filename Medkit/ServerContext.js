@@ -64,7 +64,17 @@ class ServerContext {
 
 			this.Medkit.Data.db.run('INSERT OR REPLACE INTO servers_roles(server_id, role_spec, role_id) VALUES (?, ?, ?)', this.id, role, gr.id, (err) => {
 				if (err !== null) return reject(err)
+				resolve(true) 
+			})
 
+		})
+	}
+
+	setLogChannel(channel) {
+		return new Promise((resolve, reject) => {
+
+			this.Medkit.Data.db.run('UPDATE servers SET logChannel=? WHERE server_id=?', channel, this.id, (err) => {
+				if (err !== null) return reject(err)
 				resolve(true) 
 			})
 
@@ -77,7 +87,6 @@ class ServerContext {
 		if (this.roles[role] === undefined || UC.GM === null) {
 			return false
 		}
-		console.log("userhasrole", UC)
 		return UC.GM.roles.exists('id', this.roles[role])
 	}
 }

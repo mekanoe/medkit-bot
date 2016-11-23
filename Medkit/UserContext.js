@@ -8,6 +8,7 @@ class UserContext {
 	constructor(medkit, user, SC = null) {
 		this.Medkit = medkit
 		this.U = user
+		this.id = user.id
 		this.permissions = ROLE_USER
 
 		this.SC = null

@@ -72,6 +72,25 @@ class RootCmd extends CommandSet {
 				sources: ['dm', 'text']
 			}),
 			new Command({
+				regex: /glcset ?([0-9]+)?/,
+				usage: 'glcset <text>',
+				help: 'Sets the global log channel.',
+				callback: (message, matches) => {
+					let channelId = matches[0]
+					if (matches[0] === '') {
+						//use current channel
+						channelId = message.M.channel.id
+					}
+
+					this.medkit.patchSettings({globalLogChannel: channelId}).then(() => {
+						message.reply(`Global log channel is now set to ${channelId}`)
+						this.medkit.glc('My global log channel is set to this channel.')
+					})
+
+				},
+				sources: ['dm', 'text']
+			}),
+			new Command({
 				regex: /set username (.*)/,
 				usage: 'set username <username>',
 				help: 'Sets my username.',
@@ -92,6 +111,16 @@ class RootCmd extends CommandSet {
 						this.medkit.glc(`Recache done after ${new Date() - start}ms`)
 						message.reply(`Recache done.`)
 					})
+				}
+			}),
+			new Command({
+				regex: /stop the world/,
+				usage: 'stop the world',
+				help: 'Stops me. I might restart after, though.',
+				sources: ['dm', 'text'],
+				callback: (message) => {
+					message.reply('Stopping. Bye.')
+					setTimeout(() => {process.exit(0)}, 250)
 				}
 			}),
 			new Command({

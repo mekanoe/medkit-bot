@@ -5,5 +5,6 @@ Medkit.import(
 	'root',
 	'admin',
 	'basic',
-	'nsfw'
+	'nsfw',
+	'timeouts'
 )

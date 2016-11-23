@@ -25,6 +25,19 @@ class AdminCmd extends CommandSet {
 					})
 				},
 				sources: ['text']
+			}),
+			new Command({
+				regex: /set log channel/,
+				usage: 'set log channel',
+				help: 'Sets this channel as the log channel.',
+				callback: (message, matches) => {
+					let channelId = message.M.channel.id
+
+					message.SC.setLogChannel(channelId).then(() => {
+						message.reply("I'll report to this channel!")
+					})
+				},
+				sources: ['text']
 			})
 		]
 	}

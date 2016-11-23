@@ -98,6 +98,12 @@ class Medkit {
 		return this.__internal.rootUsers || Set((process.env.ROOT_USERS || "").split(','))
 	}
 
+	////
+	// Update settings
+	patchSettings() {
+		
+	}
+
 	isRoot(id) {
 		return this.getRootUsers().has(id)
 	}

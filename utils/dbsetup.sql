@@ -33,3 +33,17 @@ INSERT INTO settings (key, value) VALUES
 	('status_state', 'online'),
 	('globalLogChannel','');
 
+----------------
+-- TIMEOUTS ---
+--------------
+
+CREATE TABLE timeouts (
+	server_id TEXT,
+	user_id TEXT,
+	mod_user_id TEXT,
+	end_time INT,
+	start_time INT,
+	duration INT,
+	reason TEXT,
+	UNIQUE(server_id, user_id) ON CONFLICT REPLACE
+);
