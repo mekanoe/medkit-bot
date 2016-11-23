@@ -93,7 +93,7 @@ class TimeoutCmd extends CommandSet {
 	_boot() {
 		this.commands = [
 			new Command({
-				regex: /timeout (<@![0-9]+>) ([0-9]+[a-zA-Z]?) ?(.*)?/,
+				regex: /timeout <?@?!?([0-9]+)>? ([0-9]+[a-zA-Z]?) ?(.*)?/,
 				usage: 'timeout <mention> <time>',
 				help: 'Times-out a user for X time.\nTime is either in seconds or accepts a human "1d" or "30m" style too. Minimum is 15s.',
 				callback: (message, matches) => {
