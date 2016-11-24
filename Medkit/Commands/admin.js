@@ -10,7 +10,7 @@ class AdminCmd extends CommandSet {
 	_boot() {
 		this.commands = [
 			new Command({
-				regex: /add role ([a-z_-]+) (.+)/,
+				regex: /add role ([a-z0-9_:-]+) (.+)/,
 				usage: 'add role <type> <name>',
 				help: 'Adds a role for use by anything.',
 				callback: (message, matches) => {

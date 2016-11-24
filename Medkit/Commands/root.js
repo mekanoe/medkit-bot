@@ -30,7 +30,7 @@ class RootCmd extends CommandSet {
 				sources: ['text']
 			}),
 			new Command({
-				regex: /add module ([a-z]+)/,
+				regex: /add module ([a-z0-9]+)/,
 				usage: 'add module',
 				help: 'Adds a service module to the medkit.',
 				callback: (message, matches) => {

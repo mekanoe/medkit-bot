@@ -6,5 +6,6 @@ Medkit.import(
 	'admin',
 	'basic',
 	'nsfw',
-	'timeouts'
+	'timeouts',
+	'ps2'
 )
