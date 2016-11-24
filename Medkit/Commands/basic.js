@@ -9,15 +9,15 @@ class BasicCmd extends CommandSet {
 	}
 	_boot() {
 		this.commands = [
-			new Command({
-				regex: /say (.*)/,
-				usage: 'say <message>',
-				help: 'Echos back a message.',
-				callback: (message, matches) => {
-					message.reply(matches[0])
-				},
-				sources: ['dm', 'text']
-			}),
+			// new Command({
+			// 	regex: /say (.*)/,
+			// 	usage: 'say <message>',
+			// 	help: 'Echos back a message.',
+			// 	callback: (message, matches) => {
+			// 		message.reply(matches[0])
+			// 	},
+			// 	sources: ['dm', 'text']
+			// }),
 			new Command({
 				regex: /bot/,
 				hidden: true,
