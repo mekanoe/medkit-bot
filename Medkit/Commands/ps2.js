@@ -12,7 +12,8 @@ class BasicCmd extends CommandSet {
 			new Command({
 				regex: /server ([a-zA-Z]+)/,
 				usage: 'server <server name>',
-				help: 'Gives you a role based on your server of choice.',
+				silentAck: true,
+				help: 'Gives you a role based on your server of choice.\nIf it succeeded, your message will disappear.',
 				callback: (message, matches) => {
 					matches[0] = matches[0].toLowerCase()
 
@@ -20,6 +21,7 @@ class BasicCmd extends CommandSet {
 						message.UC.GM.addRole(message.SC.roles[`ps2:${matches[0]}`])
 					} else {
 						message.reply("I dunno that server.\n*If you're from PS4, just use `PS4`.*")
+						return false
 					}
 				},
 				sources: ['text']
