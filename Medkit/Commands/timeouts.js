@@ -27,7 +27,7 @@ class TimeoutController {
 				len,
 				reason,
 				(err) => {
-					UC.GM.addRole(SC.roles.timeout)
+					SC.S.member(user_id).addRole(SC.roles.timeout)
 
 					if (err !== null) return reject(err)
 					resolve(true) 
@@ -61,8 +61,6 @@ class TimeoutController {
 				SC.id,
 				(err) => {
 					if (err !== null) return reject(err)
-					
-
 					
 					NewUC(this.Medkit, user_id, SC).then((UC) => {
 						UC.GM.removeRole(SC.roles.timeout)
