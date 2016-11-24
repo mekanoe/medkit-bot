@@ -25,6 +25,23 @@ class BasicCmd extends CommandSet {
 					}
 				},
 				sources: ['text']
+			}),
+			new Command({
+				regex: /remove server ([a-zA-Z]+)/,
+				usage: 'remove server <server name>',
+				silentAck: true,
+				help: 'Removes a server role.',
+				callback: (message, matches) => {
+					matches[0] = matches[0].toLowerCase()
+
+					if (message.SC.roles[`ps2:${matches[0]}`] !== undefined) {
+						message.UC.GM.removeRole(message.SC.roles[`ps2:${matches[0]}`])
+					} else {
+						message.reply("I dunno that server.\n*If you're from PS4, just use `PS4`.*")
+						return false
+					}
+				},
+				sources: ['text']
 			})
 		]
 	}
