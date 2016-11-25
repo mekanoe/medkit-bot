@@ -27,7 +27,7 @@ class BasicCmd extends CommandSet {
 				sources: ['text']
 			}),
 			new Command({
-				regex: /remove server ([a-zA-Z]+)/,
+				regex: /remove server ([a-zA-Z0-9]+)/,
 				usage: 'remove server <server name>',
 				silentAck: true,
 				help: 'Removes a server role.',
