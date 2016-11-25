@@ -10,7 +10,7 @@ class BasicCmd extends CommandSet {
 	_boot() {
 		this.commands = [
 			new Command({
-				regex: /server ([a-zA-Z]+)/,
+				regex: /server ([a-zA-Z0-9]+)/,
 				usage: 'server <server name>',
 				silentAck: true,
 				help: 'Gives you a role based on your server of choice.\nIf it succeeded, your message will disappear.',
