@@ -7,5 +7,6 @@ Medkit.import(
 	'basic',
 	'nsfw',
 	'timeouts',
-	'ps2'
+	'ps2',
+	'lewd'
 )

@@ -30,6 +30,7 @@ class Medkit {
 
 			this.Commands = new (require('./Commands'))(this)
 			this.Listener = new (require('./Listener'))(this)
+			this.Lewdkit = new (require('./Lewdkit/Lewdkit'))(this)
 
 			// discord login
 			this.client.login(process.env.DISCORD_TOKEN)
@@ -106,6 +107,11 @@ class Medkit {
 
 	isRoot(id) {
 		return this.getRootUsers().has(id)
+	}
+
+	// util functions
+	generateRandom(limit) {
+		return Math.floor(Math.random() * limit)
 	}
 }
 
