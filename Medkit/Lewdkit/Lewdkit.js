@@ -1,7 +1,15 @@
 const apiList = [
+	// 2d
 	'gelbooru',
-	'danbooru',
-	'rule34xxx'
+	'rule34xxx',
+	'yandere',
+	'safebooru',
+
+	// 3d
+	'pornhub',
+
+	// etc
+	'reddit',
 ]
 
 class Lewdkit {

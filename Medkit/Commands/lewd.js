@@ -38,6 +38,62 @@ class LewdCmd extends CommandSet {
 				},
 				sources: ['text']
 			}),
+			new Command({
+				regex: /safebooru (.*)/,
+				usage: 'safebooru <query>',
+				help: "Looks up some stuff on safebooru.",
+				callback: (message, matches) => {
+					let safebooru = message.Medkit.Lewdkit.Apis.safebooru
+
+					safebooru.query(matches[0]).then((data) => {
+						message.reply(safebooru.humanize(data))
+					})
+
+				},
+				sources: ['text']
+			}),
+			new Command({
+				regex: /yandere (.*)/,
+				usage: 'yandere <query>',
+				help: "Looks up some stuff on yandere.",
+				callback: (message, matches) => {
+					let yandere = message.Medkit.Lewdkit.Apis.yandere
+
+					yandere.query(matches[0]).then((data) => {
+						message.reply(yandere.humanize(data))
+					})
+
+				},
+				sources: ['text']
+			}),
+			new Command({
+				regex: /pornhub (.*)/,
+				usage: 'pornhub <query>',
+				help: "Looks up some stuff on pornhub.",
+				callback: (message, matches) => {
+					let pornhub = message.Medkit.Lewdkit.Apis.pornhub
+
+					pornhub.query(matches[0]).then((data) => {
+						message.reply(pornhub.humanize(data))
+					})
+
+				},
+				sources: ['text']
+			}),
+			new Command({
+				regex: /\/r\/([a-z]+)/,
+				usage: '/r/<subreddit>',
+				help: "Looks up some stuff on a subreddit.",
+				callback: (message, matches) => {
+					let reddit = message.Medkit.Lewdkit.Apis.reddit
+
+					reddit.query(matches[0]).then((data) => {
+						message.reply(reddit.humanize(data))
+					})
+
+				},
+				sources: ['text']
+			}),
 		]
 	}
 }
