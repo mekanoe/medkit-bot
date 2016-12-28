@@ -8,5 +8,6 @@ Medkit.import(
 	'nsfw',
 	'timeouts',
 	'ps2',
-	'lewd'
+	'lewd',
+	'commands'
 )

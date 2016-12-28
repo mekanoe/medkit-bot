@@ -47,3 +47,14 @@ CREATE TABLE timeouts (
 	reason TEXT,
 	UNIQUE(server_id, user_id) ON CONFLICT REPLACE
 );
+
+-----------------------
+-- CUSTOM COMMANDS ---
+---------------------
+
+CREATE TABLE custom_commands (
+	server_id TEXT,
+	command TEXT,
+	response TEXT,
+	UNIQUE(server_id, command) ON CONFLICT REPLACE
+);

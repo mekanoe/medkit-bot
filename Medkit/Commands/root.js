@@ -142,7 +142,17 @@ class RootCmd extends CommandSet {
 					message.reply(`Profiler is now ${matches[0]}.`)
 				},
 				sources: ['dm', 'text']
-			})
+			}),
+			// new Command({
+			// 	regex: /commands as (\badmin|mod|user\b)/,
+			// 	usage: 'debug profiler on|off',
+			// 	help: 'Start/stop output profiling data.',
+			// 	callback: (message, matches) => {
+			// 		this.medkit.__internal.profiler = matches[0] === 'on'
+			// 		message.reply(`Profiler is now ${matches[0]}.`)
+			// 	},
+			// 	sources: ['dm', 'text']
+			// })
 		]
 		
 	}

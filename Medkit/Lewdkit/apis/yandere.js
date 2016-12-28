@@ -3,7 +3,7 @@ const Danbooru = require('./danbooruclone')
 class Gelbooru extends Danbooru {
 	constructor(medkit) {
 		super(medkit)
-		this.domain = "http://yande.re"
+		this.domain = "https://yande.re"
 	}
 }
 

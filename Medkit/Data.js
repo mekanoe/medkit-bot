@@ -120,6 +120,24 @@ class Data {
 		})
 	}
 
+	getServerCommands(id) {
+		return new Promise((resolve, reject) => {
+				
+			this.db.all("select command, response from custom_commands where server_id = ?", id, (err, rows) => {
+				if (err) return reject(err)
+
+				let outObj = {}
+
+				rows.forEach((v) => {
+					outObj[v.command] = v.response
+				})
+
+				resolve(outObj)
+			})
+
+		})
+	}
+
 	getServer(id) {
 		return new Promise((resolve, reject) => {
 
@@ -135,7 +153,10 @@ class Data {
 
 				this.getServerRoles(id).then((roles) => {
 					server.roles = roles
-					resolve(server)
+					this.getServerCommands(id).then((commands) => {
+						server.customCommands = commands
+						resolve(server)
+					}).catch((err) => { reject(err) }) 
 				}).catch((err) => {
 					reject(err)
 				})

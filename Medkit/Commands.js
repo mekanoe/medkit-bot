@@ -196,6 +196,25 @@ class Commands {
 	}
 
 	////
+	// Custom command matcher
+	customMatcher(mc) {
+		if (!mc.SC.hasModule('commands')) {
+			return
+		}
+
+		let command = mc.text.slice(1).toLowerCase()
+		let commands = mc.SC.customCommands
+
+		if (command === 'commands') {
+			mc.reply(`:information_desk_person: **Custom commands for this server:**\n\`\`\`css\n${Object.keys(commands).join(', ')}\n\`\`\``)
+		}
+
+		if (commands[command] !== undefined) {
+			mc.reply(commands[command])
+		}
+	}
+
+	////
 	// Resolves a message context's command set from the cache, then passes the set to matcher.
 	resolver(mc) {
 
@@ -274,10 +293,10 @@ class Commands {
 		if (message.content === "**debug resolve tree") {
 			console.log(this.prettyPrintGlobalResolveTree())
 		}
-			
-		// a message is acceptable if prefix is *
+
+		// a message is acceptable if prefix is * (built-in) or - (custom)
 		// or if it's a DM.
-		if (message.channel.type === 'dm' || message.content[0] === '*') {
+		if (message.channel.type === 'dm' || message.content[0] === '*' || message.content[0] === '-') {
 			let start = undefined
 			if (this.medkit.__internal.profiler) {
 				start = new Date()
@@ -293,7 +312,11 @@ class Commands {
 					set = this.resolver(mc)
 				}
 
-				this.matcher(set, mc)
+				if (message.content[0] === '-') {
+					this.customMatcher(mc)
+				} else {
+					this.matcher(set, mc)
+				}
 				if (this.medkit.__internal.profiler && start !== undefined) {
 					mc.reply(`**\*\*PROFILER:** took ${new Date() - start}ms.`)
 				}

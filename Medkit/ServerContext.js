@@ -9,6 +9,8 @@ class ServerContext {
 		this.modules = []
 		this.logChannel = ''
 
+		this.customCommands = {}
+
 		if (serverData !== null) {
 			this.attachData(serverData)
 		}
@@ -18,6 +20,7 @@ class ServerContext {
 		this.modules = data.modules
 		this.roles = data.roles
 		this.logChannel = data.logChannel
+		this.customCommands = data.customCommands
 	}
 
 	llc(text) {
@@ -29,6 +32,11 @@ class ServerContext {
 
 		this.Medkit.client.channels.get(this.logChannel).sendMessage(text)
 	}
+
+
+	///////////////
+	// Modules ///
+	/////////////
 
 	addModule(module) {
 		this.modules.push(module)
@@ -54,6 +62,38 @@ class ServerContext {
 		})
 	}
 
+	hasModule(module) {
+		return this.modules.indexOf(module) !== -1
+	}
+
+
+	///////////////////////
+	// Custom Commands ///
+	/////////////////////
+
+	setCommand(command, response) {
+		return new Promise((resolve, reject) => {
+			this.Medkit.Data.db.run('INSERT OR REPLACE INTO custom_commands(server_id, command, response) VALUES (?, ?, ?)', this.id, command, response, (err) => {
+				if (err !== null) return reject(err)
+				resolve(this.customCommands[command] === undefined)
+			})
+		})
+	}
+
+	rmCommand(command) {
+		return new Promise((resolve, reject) => {
+			this.Medkit.Data.db.run('DELETE FROM custom_commands WHERE server_id = ? AND command = ?', this.id, command, (err) => {
+				if (err !== null) return reject(err)
+				resolve(this.customCommands[command] !== undefined)
+			})
+		})
+	}
+
+
+	/////////////
+	// Roles ///
+	///////////
+
 	addRole(role, name) {
 		return new Promise((resolve, reject) => {
 			// get role id from name
@@ -70,6 +110,20 @@ class ServerContext {
 		})
 	}
 
+	// rmRole(role, name)
+
+	userHasRole(UC, role) {
+		if (this.roles[role] === undefined || UC.GM === null) {
+			return false
+		}
+		return UC.GM.roles.exists('id', this.roles[role])
+	}
+
+
+	////////////
+	// Misc ///
+	//////////
+
 	setLogChannel(channel) {
 		return new Promise((resolve, reject) => {
 
@@ -81,14 +135,6 @@ class ServerContext {
 		})
 	}
 
-	// rmRole(role, name)
-
-	userHasRole(UC, role) {
-		if (this.roles[role] === undefined || UC.GM === null) {
-			return false
-		}
-		return UC.GM.roles.exists('id', this.roles[role])
-	}
 }
 
 module.exports = ServerContext

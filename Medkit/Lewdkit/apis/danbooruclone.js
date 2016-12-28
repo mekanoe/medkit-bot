@@ -7,7 +7,7 @@ class DanbooruClone {
 		this.Medkit = medkit
 		this.limit = 50
 		this.generateRandom = medkit.generateRandom.bind(medkit, this.limit)
-		this.domain = "http://danbooru.com"
+		this.domain = "http://danbooru.donmai.us"
 		this.path = `/index.php?page=dapi&s=post&q=index&limit=${this.limit}&tags=`
 		this.defaultTags = '-furry'
 	}
