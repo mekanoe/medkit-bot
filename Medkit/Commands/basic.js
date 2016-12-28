@@ -27,17 +27,23 @@ class BasicCmd extends CommandSet {
 				sources: ['dm', 'text']
 			}),
 			new Command({
-				regex: /commands/,
+				regex: /commands$/,
 				usage: 'commands',
 				help: 'Shows available commands.',
 				callback: (message) => {
 
 					let cmds = this.medkit.Commands.resolver(message)
 
-					let text = "Available commands:\n\n" + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
+					let text = ":information_desk_person: **Available commands:**\n\n" + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`*${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
 						
 					if (message.SC.hasModule('commands')) {
-						text = text + `\n\nThis server also has custom commands, \`\`\`css\n${Object.keys(message.SC.customCommands).join(', ')}\n\`\`\``
+						text = text + `\n\n**This server also has custom commands,** type \`-commands\` for these.`
+					}
+
+					console.log('length', text.length)
+
+					if (text.length >= 2000) {
+						message.reply(':no_good: You have too many commands! You might need to ask a bot operator for help.')
 					}
 
 					message.reply(text)

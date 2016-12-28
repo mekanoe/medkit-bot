@@ -10,16 +10,17 @@ class CommandCmd extends CommandSet {
 	_boot() {
 		this.commands = [
 			new Command({
-				regex: /\bset|add\b command [\-\!\*]?([A-Za-z0-9_:-]+) (.+)/,
+				regex: /(\bset|add\b) command [\-\!\*]?([A-Za-z0-9_:\-]+) ([\s\w]+)/m,
 				usage: 'set command <name> <output>',
 				help: 'Sets a custom command.',
 				callback: (message, matches) => {
-					if (matches[0] === 'commands') {
+					console.log(matches)
+					if (matches[1] === 'commands') {
 						message.reply('❌ You can\'t use `commands` as a command, silly.')
 						return
 					}
 
-					message.SC.setCommand(matches[0].toLowerCase(), matches[1]).then((isnew) => {
+					message.SC.setCommand(matches[1].toLowerCase(), matches[2]).then((isnew) => {
 						if (isnew) {
 							message.reply('Command added.')
 						} else {
@@ -30,7 +31,7 @@ class CommandCmd extends CommandSet {
 				sources: ['text']
 			}),
 			new Command({
-				regex: /\bremove|delete|del|rm\b command ([A-Za-z0-9_:-]+)/,
+				regex: /\bremove|delete|del|rm\b command ([A-Za-z0-9_:\-]+)/,
 				usage: 'remove command <name>',
 				help: 'Removes a custom command.',
 				callback: (message, matches) => {

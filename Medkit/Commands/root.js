@@ -143,16 +143,45 @@ class RootCmd extends CommandSet {
 				},
 				sources: ['dm', 'text']
 			}),
-			// new Command({
-			// 	regex: /commands as (\badmin|mod|user\b)/,
-			// 	usage: 'debug profiler on|off',
-			// 	help: 'Start/stop output profiling data.',
-			// 	callback: (message, matches) => {
-			// 		this.medkit.__internal.profiler = matches[0] === 'on'
-			// 		message.reply(`Profiler is now ${matches[0]}.`)
-			// 	},
-			// 	sources: ['dm', 'text']
-			// })
+			new Command({
+				regex: /commands as (\badmin|mod|user|1|2|3\b)/,
+				usage: 'commands as admin|mod|user',
+				help: 'Figure out commands for specific roles',
+				callback: (message, matches) => {
+					let userLevel = 0
+
+					switch(matches[0]) {
+						case '1':
+						case 'admin':
+							userLevel = 1
+							break
+						case '2':
+						case 'mod':
+							userLevel = 2
+							break
+						case '3':
+						case 'user':
+							userLevel = 3
+							break
+					}
+
+					message.UC.permissions = userLevel
+					message.UC.__forceRole = true
+
+					let cmds = this.medkit.Commands.resolver(message)
+
+					let text = ":information_desk_person: **Available commands:**\n\n" + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`*${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
+						
+					if (message.SC.hasModule('commands')) {
+						text = text + `\n\n**This server also has custom commands,** type \`-commands\` for these.`
+					}
+
+					console.log('length', text.length)
+
+					message.reply(text)
+				},
+				sources: ['dm', 'text']
+			})
 		]
 		
 	}

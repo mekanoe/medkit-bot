@@ -11,6 +11,8 @@ class UserContext {
 		this.id = user.id
 		this.permissions = ROLE_USER
 
+		this.__forceRole = false
+
 		this.SC = null
 		this.GM = null
 
@@ -47,6 +49,10 @@ class UserContext {
 	}
 
 	isRoot() {
+		if (this.__forceRole === true) {
+			return false
+		}
+
 		return this.Medkit.isRoot(this.U.id)
 	}
 
