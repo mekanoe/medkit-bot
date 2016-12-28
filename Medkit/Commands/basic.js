@@ -35,6 +35,11 @@ class BasicCmd extends CommandSet {
 					let cmds = this.medkit.Commands.resolver(message)
 
 					let text = "Available commands:\n\n" + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
+						
+					if (message.SC.hasModule('commands')) {
+						text = text + `\n\nThis server also has custom commands, \`\`\`css\n${Object.keys(message.SC.customCommands).join(', ')}\n\`\`\``
+					}
+
 					message.reply(text)
 				},
 				sources: ['dm', 'text']
