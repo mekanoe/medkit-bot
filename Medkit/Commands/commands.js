@@ -10,7 +10,7 @@ class CommandCmd extends CommandSet {
 	_boot() {
 		this.commands = [
 			new Command({
-				regex: /(\bset|add\b) command [\-\!\*]?([A-Za-z0-9_:\-]+) ([\s\w]+)/m,
+				regex: /(\bset|add\b) command [\-\!\*]?([A-Za-z0-9_:\-]+) ([\s\S]+)/m,
 				usage: 'set command <name> <output>',
 				help: 'Sets a custom command.',
 				callback: (message, matches) => {
