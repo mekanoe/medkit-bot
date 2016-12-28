@@ -81,13 +81,13 @@ class LewdCmd extends CommandSet {
 				sources: ['text']
 			}),
 			new Command({
-				regex: /\/r\/([a-z]+)/,
+				regex: /\/r\/([a-z0-9_\-A-Z]+) ?(\byear|month|week|day|hour|all\b)?/,
 				usage: '/r/<subreddit>',
 				help: "Looks up some stuff on a subreddit.",
 				callback: (message, matches) => {
 					let reddit = message.Medkit.Lewdkit.Apis.reddit
 
-					reddit.query(matches[0]).then((data) => {
+					reddit.query(matches[0], matches[1] || 'all').then((data) => {
 						message.reply(reddit.humanize(data))
 					})
 

@@ -3,19 +3,22 @@ const superagent = require('superagent')
 class Reddit {
 	constructor(medkit) {
 		this.limit = 50
-		this.generateRandom = medkit.generateRandom.bind(medkit, this.limit)
+		this.generateRandom = medkit.generateRandom
 	}
 
-	query(subreddit) {
+	query(subreddit, time = 'all') {
 		return new Promise((resolve, reject) => {
-			superagent.get(`https://reddit.com/r/${subreddit}/top.json?t=all&limit=${this.limit}`).type('json').then((res) => {
-				resolve(res.body.data.children[this.generateRandom()])
+			superagent.get(`https://reddit.com/r/${subreddit}/top.json?t=${time}&limit=${this.limit}`).type('json').then((res) => {
+				let randLength = (res.body.data.children.length < this.limit) ? res.body.data.children.length : this.limit
+				resolve(res.body.data.children[this.generateRandom(randLength)])
 			})
 		})
 	}
 
 	humanize(item) {
-		return `:link: ${item.data.url}`
+		item.data.title = item.data.title.replace(/&amp;/g, '&')
+		item.data.url = item.data.url.replace(/&amp;/g, '&')
+		return `:hash: **${item.data.title}**\n:link: ${item.data.url}`
 	}
 }
 
