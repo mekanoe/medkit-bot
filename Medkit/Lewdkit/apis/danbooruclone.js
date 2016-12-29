@@ -12,6 +12,23 @@ class DanbooruClone {
 		this.defaultTags = '-furry'
 	}
 
+	command(name) {
+		return {
+			regex: new RegExp(`${name} (.*)`),
+			usage: `${name} <query>`,
+			help: `Looks up some stuff on ${name}.`,
+			callback: (message, matches) => {
+				let c = message.Medkit.Lewdkit.Apis[name]
+
+				c.query(matches[0]).then((data) => {
+					message.reply(c.humanize(data))
+				})
+
+			},
+			sources: ['text']
+		}
+	}
+
 	query(tags) {
 		return new Promise((resolve, reject) => {
 			superagent

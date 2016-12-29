@@ -1,7 +1,9 @@
+const Command = require('../Commands/Command')
+
 const apiList = [
 	// 2d
 	'gelbooru',
-	'rule34xxx',
+	'rule34',
 	'yandere',
 	'safebooru',
 
@@ -26,6 +28,17 @@ class Lewdkit {
 		list.forEach((v) => {
 			this.Apis[v] = new (require('./apis/'+v))(this.Medkit)
 		})
+	}
+
+	apisToCommandArray() {
+		let commands = []
+		return Object.keys(this.Apis).map((k) => {
+			let v = this.Apis[k]
+			if (v.command !== undefined) {
+				return new Command(v.command(k))
+			}
+		})
+
 	}
 
 }

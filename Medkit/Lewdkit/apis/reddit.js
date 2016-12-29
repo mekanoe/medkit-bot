@@ -6,6 +6,23 @@ class Reddit {
 		this.generateRandom = medkit.generateRandom
 	}
 
+	command(name) {
+		return {
+			regex: /\/r\/([a-z0-9_\-A-Z]+) ?(\byear|month|week|day|hour|all\b)?/,
+			usage: '/r/<subreddit>',
+			help: "Looks up some stuff on a subreddit.",
+			callback: (message, matches) => {
+				let reddit = message.Medkit.Lewdkit.Apis.reddit
+
+				reddit.query(matches[0], matches[1] || 'all').then((data) => {
+					message.reply(reddit.humanize(data))
+				})
+
+			},
+			sources: ['text']
+		}
+	}
+
 	query(subreddit, time = 'all') {
 		return new Promise((resolve, reject) => {
 			superagent.get(`https://reddit.com/r/${subreddit}/top.json?t=${time}&limit=${this.limit}`).type('json').then((res) => {
