@@ -31,11 +31,11 @@ class CommandCmd extends CommandSet {
 				sources: ['text']
 			}),
 			new Command({
-				regex: /\bremove|delete|del|rm\b command ([A-Za-z0-9_:\-]+)/,
+				regex: /(\bremove|delete|del|rm\b) command ([A-Za-z0-9_:\-]+)/,
 				usage: 'remove command <name>',
 				help: 'Removes a custom command.',
 				callback: (message, matches) => {
-					message.SC.rmCommand(matches[0].toLowerCase(), matches[1]).then((existed) => {
+					message.SC.rmCommand(matches[1].toLowerCase()).then((existed) => {
 						if (existed) {
 							message.reply('Command removed.')
 						} else {
