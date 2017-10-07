@@ -1,8 +1,7 @@
-FROM mhart/alpine-node:6.9
-MAINTAINER Katie Thornhill <kath@splitmedialabs.com>
+FROM mhart/alpine-node:8.6
 
 RUN apk add --no-cache su-exec &&\
-	npm i --verbose -g yarn pm2
+	npm i --verbose -g pm2
 
 COPY . /src
 WORKDIR /src
@@ -13,9 +12,8 @@ RUN adduser -D -s /bin/ash nodeuser &&\
 	chown -R nodeuser:nodeuser /data &&\
 	chmod 777 /data &&\
 	apk add --no-cache python g++ make &&\
-	su-exec nodeuser yarn --pure-lockfile &&\
-	apk del python g++ make &&\
-	rm -rf /home/nodeuser/.yarn-cache
+	su-exec nodeuser npm i &&\
+	apk del python g++ make
 
 CMD ["su-exec", "nodeuser", "pm2", "start", "main.js", "--no-daemon"]
 
