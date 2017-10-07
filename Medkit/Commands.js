@@ -153,32 +153,24 @@ class Commands {
 	////
 	// @internal
 	// Because building contexts is super ugly, we'll do it in it's own function here.
-	buildContext(message) {
-		return new Promise((resolve, reject) => {
-
-			let UC = new UserContext(this.medkit, message.author)
+	async buildContext(message, { UC = null, SC = null } = {}) {
+			UC = UC || new UserContext(this.medkit, message.author)
 			let MC = new MessageContext(this.medkit, message, { UC })
 
 			if (message.channel.type === 'text' && message.guild !== undefined) {
-				this.medkit.Data.getServer(message.guild.id).then((server) => {
-					let SC = new ServerContext(this.medkit, message.guild)
+				const server = await this.medkit.Data.getServer(message.guild.id)
+				SC = SC || new ServerContext(this.medkit, message.guild)
 
-					if (server === null) {
-					} else {
-						SC.attachData(server)
-					}
+				if (server === null) {
+				} else {
+					SC.attachData(server)
+				}
 
-					UC.attachSC(SC)
-					MC.SC = SC
-					resolve(MC)
-				}).catch((err) => {
-					return reject(err)
-				})
-			} else {
-				resolve(MC)
+				UC.attachSC(SC)
+				MC.SC = SC
 			}
 
-		})
+			return MC
 	}
 
 	////
@@ -280,7 +272,7 @@ class Commands {
 	////
 	// @event
 	// Handles a Discord->message
-	handler(message) {
+	async handler(message, ctxOpts) {
 
 		if (this.medkit.__internal.processMessages === false) {
 			return
@@ -302,27 +294,29 @@ class Commands {
 				start = new Date()
 			}
 
-			this.buildContext(message).then((mc) => {
-				let set = []
-				if (this.medkit.__internal.noCache) {
-					// this is a dumb way of not caching, 
-					// just rolls through every registered command.
-					set = this.noCacheResolver(mc)
-				} else {
-					set = this.resolver(mc)
-				}
+			const mc = await this.buildContext(message, ctxOpts)
+			let set = []
+			if (this.medkit.__internal.noCache) {
+				// this is a dumb way of not caching, 
+				// just rolls through every registered command.
+				set = this.noCacheResolver(mc)
+			} else {
+				set = this.resolver(mc)
+			}
 
+			try {
 				if (message.content[0] === '-') {
 					this.customMatcher(mc)
 				} else {
 					this.matcher(set, mc)
 				}
-				if (this.medkit.__internal.profiler && start !== undefined) {
-					mc.reply(`**\*\*PROFILER:** took ${new Date() - start}ms.`)
-				}
-			}).catch((err) => {
-				throw err
-			})
+			} catch (e) {
+				console.error(`ERROR: ${e}\n${e.trace || e.stack}`)
+			}
+
+			if (this.medkit.__internal.profiler && start !== undefined) {
+				mc.reply(`**\*\*PROFILER:** took ${new Date() - start}ms.`)
+			}
 		}
 
 	}

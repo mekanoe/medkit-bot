@@ -1,5 +1,6 @@
 const CommandSet = require('./CommandSet')
 const Command = require('./Command')
+const { NewSC, NewUC } = require('../ContextUtils')
 
 ////
 // Root-level commands
@@ -140,6 +141,26 @@ class RootCmd extends CommandSet {
 				callback: (message, matches) => {
 					this.medkit.__internal.profiler = matches[0] === 'on'
 					message.reply(`Profiler is now ${matches[0]}.`)
+				},
+				sources: ['dm', 'text']
+			}),
+			new Command({
+				regex: /as ([0-9]+) (.*)/,
+				usage: 'as <server id> <command>',
+				help: 'Run the command as it would in another server',
+				callback: async (message, matches) => {
+					console.log(matches[0], matches[1])
+					
+					try {
+						const nSC = await NewSC(this.medkit, matches[0])
+						message.UC.attachSC(nSC)
+						message.M.content = matches[1]
+						console.log(message.M, nSC)
+						this.medkit.Commands.handler(message.M, { SC: nSC, UC: message.UC, replyChannel: message.M.channel })
+					} catch (e) {
+						console.error(`ERROR: ${e}\n${e.trace || e.stack}`)
+						return
+					}
 				},
 				sources: ['dm', 'text']
 			}),

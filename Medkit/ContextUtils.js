@@ -5,21 +5,14 @@ const UserContext = require('./UserContext')
 // This file has a bunch of generic, out-of-context *Context wrappers.
 
 module.exports = {
-
-	NewSC: (medkit, id) => {
-		return new Promise((resolve, reject) => {
-			medkit.Data.getServer(id).then((s) => {
-				let guild = medkit.client.guilds.get(id)
-				resolve(new ServerContext(medkit, guild, s))
-			})
-		})
+	NewSC: async (medkit, id) => {
+		const s = await medkit.Data.getServer(id)
+		let guild = medkit.client.guilds.get(id)
+		return new ServerContext(medkit, guild, s)
 	},
 
-	NewUC: (medkit, id, SC = null) => {
-		return new Promise((resolve, reject) => {
-			let user = medkit.client.users.get(id)
-			resolve(new UserContext(medkit, user, SC))
-		})
+	NewUC: async (medkit, id, SC = null) => {
+		let user = medkit.client.users.get(id)
+		return new UserContext(medkit, user, SC)
 	}
-
 }

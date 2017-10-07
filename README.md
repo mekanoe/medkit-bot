@@ -27,21 +27,21 @@ If you can't find your bot for some reason, or you didn't want to fill in that e
 
 - *Currently as a bug workaround, DM Medkit `\*recache` or restart the bot before continuing*
 
-- `\*init server`
+- `*init server`
 
-- `\*add role admin <name of admin role>`, (optional,) ex. `*add role admin Admins`
+- `*add role admin <name of admin role>`, (optional,) ex. `*add role admin Admins`
 
-- `\*add role mod <name of mod role>` (optional)
+- `*add role mod <name of mod role>` (optional)
 
 ## Using modules
 
 Medkit is a modular machine, and comes with batteries uninstalled.
 
-- `\*add module <name>` to add a module
+- `*add module <name>` to add a module
 
-- `\*rm module <name>` to remove a module
+- `*rm module <name>` to remove a module
 
-- `\*get modules` to list all modules enabled
+- `*get modules` to list all modules enabled
 
 ### Modules available
 

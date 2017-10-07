@@ -4,12 +4,13 @@ const ServerContext = require('./ServerContext')
 ////
 // Message context. Wraps a Discord#Message into more medkit-specific things.
 class MessageContext {
-	constructor(medkit, message, {UC = null, SC = null}) {
+	constructor(medkit, message, {UC = null, SC = null, replyChannel = null} = {}) {
 		this.M = message
 		this.Medkit = medkit
 
 		this.text = message.content
 		this.source = message.channel.type
+		this.__replyChannel = replyChannel || message.channel
 
 		this.UC = UC
 		this.SC = SC
@@ -20,7 +21,7 @@ class MessageContext {
 	}
 
 	reply(text) {
-		return this.M.channel.sendMessage(text)
+		return this.__replyChannel.sendMessage(text)
 	}
 
 }
