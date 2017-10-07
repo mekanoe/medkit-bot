@@ -149,13 +149,13 @@ class RootCmd extends CommandSet {
 				usage: 'as <server id> <command>',
 				help: 'Run the command as it would in another server',
 				callback: async (message, matches) => {
-					console.log(matches[0], matches[1])
+					// console.log(matches[0], matches[1])
 					
 					try {
 						const nSC = await NewSC(this.medkit, matches[0])
 						message.UC.attachSC(nSC)
 						message.M.content = matches[1]
-						console.log(message.M, nSC)
+						// console.log(message.M, nSC)
 						this.medkit.Commands.handler(message.M, { SC: nSC, UC: message.UC, replyChannel: message.M.channel })
 					} catch (e) {
 						console.error(`ERROR: ${e}\n${e.trace || e.stack}`)
