@@ -7,15 +7,17 @@
     "url": "github.com/genudine/medkit-bot",
     "type": "git"
   },
-  "author": "Katie Thornhill <kath@splitmedialabs.com>",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^10.0.0",
+    "bufferutil": "^3.0.2",
+    "discord.js": "^11.2.1",
     "dotenv": "^4.0.0",
     "immutable": "^3.8.2",
     "moment": "^2.18.1",
     "parse-duration": "^0.1.1",
-    "sqlite3": "^3.1.13",
+    "sqlite3": "3.1.13",
+    "superagent": "^3.6.3",
+    "uws": "^8.14.1",
     "xml2js": "^0.4.19"
   }
 }

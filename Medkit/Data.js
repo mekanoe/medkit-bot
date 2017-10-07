@@ -60,6 +60,18 @@ class Data {
 		}
 	}
 
+	_dbFetch(op, ...args) {
+		return new Promise((resolve, reject) => {
+			this.db[op].apply(this.db, [...args, (err, result) => {
+				if (err) {
+					reject(err)
+				}
+
+				resolve(result)
+			}])
+		})
+	}
+
 	__migrate() {
 		console.warn("starting hot database migration")
 		let sql = fs.readFileSync(`${__dirname}/../utils/dbsetup.sql`,'utf8')
@@ -102,68 +114,46 @@ class Data {
 		})
 	}
 
-	getServerRoles(id) {
-		return new Promise((resolve, reject) => {
+	async getServerRoles(id) {
+		const rows = await this._dbFetch("all", "select * from servers_roles where server_id = ?", id)
 
-			this.db.all("select * from servers_roles where server_id = ?", id, (err, rows) => {
-				if (err) return reject(err)
-
-				let outObj = {}
-
-				rows.forEach((v) => {
-					outObj[v.role_spec] = v.role_id
-				})
-
-				resolve(outObj)
-			})
-
-		})
+		return rows.reduce((acc, val) => {
+			return {
+				...acc,
+				[val.role_spec]: val.role_id
+			}
+		}, {})
 	}
 
-	getServerCommands(id) {
-		return new Promise((resolve, reject) => {
-				
-			this.db.all("select command, response from custom_commands where server_id = ?", id, (err, rows) => {
-				if (err) return reject(err)
+	async getServerCommands(id) {
+		// console.log(`q: "select command, response from custom_commands where server_id = ${id}"`)
+		const rows = await this._dbFetch("all", "select command, response from custom_commands where server_id = ?", id)
 
-				let outObj = {}
-
-				rows.forEach((v) => {
-					outObj[v.command] = v.response
-				})
-
-				resolve(outObj)
-			})
-
-		})
+		return rows.reduce((acc, val) => {
+			return {
+				...acc,
+				[val.command]: val.response
+			}
+		}, {})
 	}
 
-	getServer(id) {
-		return new Promise((resolve, reject) => {
+	async getServer(id) {
+		// console.log(`q: "select * from servers where server_id = ${id}"`)			
+		const server = await this._dbFetch("get", "select * from servers where server_id = ?", id)
 
-			this.db.get("select * from servers where server_id = ?", id, (err, server) => {
-				if (err) return reject(err)
+		if (server === undefined) {
+			return null
+		}
 
+		server.modules = server.modules.split(',').filter(x => x !== '')
 
-				if (server === undefined) {
-					return resolve(null)
-				}
-
-				server.modules = server.modules.split(',').filter(x => x !== '')
-
-				this.getServerRoles(id).then((roles) => {
-					server.roles = roles
-					this.getServerCommands(id).then((commands) => {
-						server.customCommands = commands
-						resolve(server)
-					}).catch((err) => { reject(err) }) 
-				}).catch((err) => {
-					reject(err)
-				})
-
-			})
-
-		})
+		const roles = await this.getServerRoles(id)
+		server.roles = roles
+		
+		const commands = await this.getServerCommands(id)
+		server.customCommands = commands
+		
+		return server
 	}
 
 	initServer(SC) {

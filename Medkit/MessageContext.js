@@ -21,7 +21,7 @@ class MessageContext {
 	}
 
 	reply(text) {
-		return this.__replyChannel.sendMessage(text)
+		return this.__replyChannel.send(text)
 	}
 
 }

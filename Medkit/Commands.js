@@ -154,23 +154,23 @@ class Commands {
 	// @internal
 	// Because building contexts is super ugly, we'll do it in it's own function here.
 	async buildContext(message, { UC = null, SC = null } = {}) {
-			UC = UC || new UserContext(this.medkit, message.author)
-			let MC = new MessageContext(this.medkit, message, { UC })
+		UC = UC || new UserContext(this.medkit, message.author)
+		let MC = new MessageContext(this.medkit, message, { UC })
 
-			if (message.channel.type === 'text' && message.guild !== undefined) {
-				const server = await this.medkit.Data.getServer(message.guild.id)
-				SC = SC || new ServerContext(this.medkit, message.guild)
+		if (message.channel.type === 'text' && message.guild !== undefined) {
+			const server = await this.medkit.Data.getServer((SC !== null) ? SC.id : message.guild.id)
+			SC = SC || new ServerContext(this.medkit, message.guild)
 
-				if (server === null) {
-				} else {
-					SC.attachData(server)
-				}
-
-				UC.attachSC(SC)
-				MC.SC = SC
+			if (server === null) {
+			} else {
+				SC.attachData(server)
 			}
 
-			return MC
+			UC.attachSC(SC)
+			MC.SC = SC
+		}
+
+		return MC
 	}
 
 	////

@@ -153,10 +153,10 @@ class RootCmd extends CommandSet {
 					
 					try {
 						const nSC = await NewSC(this.medkit, matches[0])
-						message.UC.attachSC(nSC)
+						const nUC = await NewUC(this.medkit, message.UC.id, nSC)
 						message.M.content = matches[1]
 						// console.log(message.M, nSC)
-						this.medkit.Commands.handler(message.M, { SC: nSC, UC: message.UC, replyChannel: message.M.channel })
+						this.medkit.Commands.handler(message.M, { SC: nSC, UC: nUC, replyChannel: message.M.channel })
 					} catch (e) {
 						console.error(`ERROR: ${e}\n${e.trace || e.stack}`)
 						return
