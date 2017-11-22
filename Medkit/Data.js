@@ -156,10 +156,10 @@ class Data {
 		return server
 	}
 
-	initServer(SC) {
+	async initServer(SC) {
 		return new Promise((resolve, reject) => {
 			this.db.exec(
-				`INSERT INTO servers (server_id, modules, logChannel) VALUES ('${SC.id}', '', '');`,
+				`DELETE FROM servers WHERE server_id='${SC.id}'; INSERT INTO servers (server_id, modules, logChannel) VALUES ('${SC.id}', '', '');`,
 				(err) => {
 					if (err !== null) return reject(err) 
 					resolve(true)
