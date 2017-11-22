@@ -1,58 +1,56 @@
 const Command = require('../Commands/Command')
 
 const apiList = [
-	// 2d
-	'gelbooru',
-	'rule34',
-	'yandere',
-	'safebooru',
+  // 2d
+  'gelbooru',
+  'rule34',
+  'yandere',
+  'safebooru',
 
-	// 3d
-	'pornhub',
-	'youporn',
+  // 3d
+  'pornhub',
+  'youporn',
 
-	// etc
-	'reddit',
+  // etc
+  'reddit'
 ]
 
 class Lewdkit {
-	constructor(medkit) {
-		this.Medkit = medkit
-		this.Data = medkit.Data
+  constructor (medkit) {
+    this.Medkit = medkit
+    this.Data = medkit.Data
 
-		this.Apis = {}
-		this.mountApis(apiList)
-	}
+    this.Apis = {}
+    this.mountApis(apiList)
+  }
 
-	mountApis(list) {
-		list.forEach((v) => {
-			this.Apis[v] = new (require('./apis/'+v))(this.Medkit)
-		})
-	}
+  mountApis (list) {
+    list.forEach((v) => {
+      this.Apis[v] = new (require('./apis/' + v))(this.Medkit)
+    })
+  }
 
-	apisToCommandArray() {
-		let commands = []
-		return Object.keys(this.Apis).map((k) => {
-			let v = this.Apis[k]
-			if (v.command !== undefined) {
-				const cmd = new Command(v.command(k))
+  apisToCommandArray () {
+    let commands = []
+    return Object.keys(this.Apis).map((k) => {
+      let v = this.Apis[k]
+      if (v.command !== undefined) {
+        const cmd = new Command(v.command(k))
 
-				cmd.callback = this.wrapCallback(cmd.callback)
+        cmd.callback = this.wrapCallback(cmd.callback)
 
-				return cmd
-			}
-		})
+        return cmd
+      }
+    })
+  }
 
-	}
-
-	wrapCallback(cb) {
-		return (message, matches) => {
-			if (message.M.channel.nsfw) {
-				cb(message, matches)
-			}
-		}
-	}
-
+  wrapCallback (cb) {
+    return (message, matches) => {
+      if (message.M.channel.nsfw) {
+        cb(message, matches)
+      }
+    }
+  }
 }
 
 module.exports = Lewdkit
