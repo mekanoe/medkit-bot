@@ -35,10 +35,22 @@ class Lewdkit {
 		return Object.keys(this.Apis).map((k) => {
 			let v = this.Apis[k]
 			if (v.command !== undefined) {
-				return new Command(v.command(k))
+				const cmd = new Command(v.command(k))
+
+				cmd.callback = this.wrapCallback(cmd.callback)
+
+				return cmd
 			}
 		})
 
+	}
+
+	wrapCallback(cb) {
+		return (message, matches) => {
+			if (message.M.channel.nsfw) {
+				cb(message, matches)
+			}
+		}
 	}
 
 }
