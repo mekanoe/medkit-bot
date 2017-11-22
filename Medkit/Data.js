@@ -33,6 +33,11 @@ const sqlite3 = require('sqlite3')
 
 const PATH = `${process.env.DATA_PATH || process.cwd()}/medkit-data.db3`
 
+function q(query) {
+	console.log(query)
+	return query
+}
+
 class Data {
 	constructor(medkit) {
 		this.medkit = medkit
@@ -94,6 +99,13 @@ class Data {
 				resolve(outObj)
 			})
 		})
+	}
+
+	setKV(table, data) {
+		// Stringify data
+		let values = Object.keys(data).map(k => `('${k}', '${data[k]}')`).join(', ')
+
+		return this._dbFetch('exec', q(`INSERT OR REPLACE INTO ${table} (key, value) VALUES ${values}`))
 	}
 
 	getFullServerModuleTree() {

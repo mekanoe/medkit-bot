@@ -49,7 +49,7 @@ class Medkit {
 
 		let glcId = this.__internal.settings.globalLogChannel || ""
 		if (glcId !== "") {
-			this.client.channels.get(glcId).sendMessage(text)
+			this.client.channels.get(glcId).send(text)
 		}
 	}
 
@@ -61,7 +61,7 @@ class Medkit {
 	llc(server, text) {
 		let llcId = this.Data.P.get('servers').get(server).get('logChannel')
 		if (llcId !== "") {
-			this.client.channels.get(llcId).sendMessage(text)
+			this.client.channels.get(llcId).send(text)
 		}
 	}
 
@@ -101,8 +101,15 @@ class Medkit {
 
 	////
 	// Update settings
-	patchSettings() {
-		
+	async patchSettings(data) {
+		console.log('patchSettings', data)
+		await this.Data.setKV('settings', data)
+		this.__internal.settings = {
+			...this.__internal.settings,
+			...data
+		}
+
+		this.glc(`Settings updated ---\n${ Object.keys(data).map(k => `**${k}** => ${data[k]}`).join('\n') }`)
 	}
 
 	isRoot(id) {
