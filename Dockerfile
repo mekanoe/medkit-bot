@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:8.6
+FROM mhart/alpine-node:9.2
 
 RUN apk add --no-cache su-exec &&\
 	npm i --verbose -g pm2
