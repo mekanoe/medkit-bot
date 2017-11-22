@@ -78,10 +78,12 @@ class RootCmd extends CommandSet {
 				help: 'Sets the global log channel.',
 				callback: (message, matches) => {
 					let channelId = matches[0]
-					if (matches[0] === '') {
+					if (matches[0] === '' || channelId === undefined) {
 						//use current channel
 						channelId = message.M.channel.id
 					}
+
+					console.log(channelId, message.M)
 
 					this.medkit.patchSettings({globalLogChannel: channelId}).then(() => {
 						message.reply(`Global log channel is now set to ${channelId}`)
