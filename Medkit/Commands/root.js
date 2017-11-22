@@ -105,14 +105,28 @@ class RootCmd extends CommandSet {
         regex: /set avatar/,
         usage: 'set avatar',
         help: 'Sets my avatar to the attached image.',
-        callback: async (message, matches) => {
-          try {
-            await this.medkit.client.user.setAvatar(message.M.attachments.first().url)
-          } catch (err) {
-            message.reply(`The dress you gave me didn't fit ;-;`)
-          }
+        callback: (message, matches) => {
+          setTimeout(async () => {
+            try {
+              let url = ''
+              
+              if (message.M.attachments.length > 0) {
+                url = message.M.attachments.first().url
+              } else if (message.M.embeds.length > 0) {
+                url = message.M.embeds[0].url
+              } else {
+                throw new Error('no viable url')
+              }
 
-          message.reply('I look prettier now!~')
+              await this.medkit.client.user.setAvatar(url)
+            } catch (err) {
+              message.reply(`The dress you gave me didn't fit ;-;`)
+              console.error('set avatar failed', err)
+              return
+            }
+
+            message.reply('I look prettier now!~')
+          }, 1000)
         },
         sources: ['dm', 'text']
       }),
