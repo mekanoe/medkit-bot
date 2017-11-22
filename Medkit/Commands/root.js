@@ -103,6 +103,21 @@ class RootCmd extends CommandSet {
 				sources: ['dm', 'text']
 			}),
 			new Command({
+				regex: /set avatar/,
+				usage: 'set avatar',
+				help: 'Sets my avatar to the attached image.',
+				callback: async (message, matches) => {
+					try {
+						await this.medkit.client.user.setAvatar(message.M.attachments.first().url)
+					} catch (err) {
+						message.reply(`The dress you gave me didn't fit ;-;`)
+					}
+
+					message.reply('I look prettier now!~')
+				},
+				sources: ['dm', 'text']
+			}),
+			new Command({
 				regex: /recache/,
 				usage: 'recache',
 				help: '**DANGER:** Recaches command tree. This is expensive.',
