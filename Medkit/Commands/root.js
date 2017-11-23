@@ -247,7 +247,7 @@ class RootCmd extends CommandSet {
             }, 0)}`,
             `🔰 **Servers:** ${this.medkit.client.guilds.array().length}`,
             '',
-            `⚙️ **CPU Load:** ${load.currentload.toFixed(2)}% (${load.avgload})`,
+            `⚙️ **CPU Load:** *Avg* >> ${load.avgload}% || *Current* >> ${load.currentload.toFixed(2)}%`,
             `⚙️ **Memory Usage:** *Hu/Ht* >> ${prettyBytes(procMem.heapUsed)}/${prettyBytes(procMem.heapTotal)} || *Sys* >> ${prettyBytes(sysMem.free)}/${prettyBytes(sysMem.total)}`,
             `⚙️ **DB Size:** ${prettyBytes(fs.statSync(this.medkit.Data.__path).size)}`
           ]
