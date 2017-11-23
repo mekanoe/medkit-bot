@@ -1,4 +1,4 @@
-const Danbooru = require('./danbooruclone')
+const Danbooru = require('./_danbooruclone')
 
 class Gelbooru extends Danbooru {
   constructor (medkit) {
