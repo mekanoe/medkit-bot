@@ -57,7 +57,8 @@ class Data {
       needsMigration = true
     }
 
-    console.log('db path:', PATH)
+    // console.log('db path:', PATH)
+    this.__path = PATH
     this.db = new sqlite3.cached.Database(PATH)
 
     if (needsMigration) {
@@ -85,7 +86,7 @@ class Data {
   }
 
   async getMedkitSettings () {
-    let rows = await this.db.all('select * from settings')
+    let rows = await this._dbFetch('all', 'select * from settings')
 
     let outObj = {}
     

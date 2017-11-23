@@ -34,12 +34,14 @@ class Medkit {
       this.__internal.settings = await this.Data.getMedkitSettings()
       console.log('✅ settings ok')
     } catch (e) {
+      console.error(e)
       throw new Error('medkit settings scuffed')
     }
     this.__internal.rootUsers = this.getRootUsers()
     this.__internal.processMessages = false
     this.__internal.profiler = false
     this.__internal.noCache = false
+    this.__internal.bootTime = new Date()
 
     // get discord client, mount working stuff
     this.client = new discord.Client()

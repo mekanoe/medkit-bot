@@ -1,3 +1,8 @@
+const moment = require('moment-timezone')
+const sysinfo = require('systeminformation')
+const prettyBytes = require('pretty-bytes')
+const fs = require('fs')
+
 const CommandSet = require('../CommandSet')
 const Command = require('../Command')
 const { NewSC, NewUC } = require('../ContextUtils')
@@ -100,7 +105,7 @@ class RootCmd extends CommandSet {
         help: 'This bot speaks to someone.',
         callback: (message, matches) => {
           this.medkit.client.users.get(matches[0]).send(matches[1])
-          message.reply(`**DM** sent to <@${matches[0]}> >>\n\n${matches[1]}`)          
+          message.reply(`**DM** sent to <@${matches[0]}> >>\n\n${matches[1]}`)
         }
       }),
       new Command({
@@ -225,6 +230,29 @@ class RootCmd extends CommandSet {
           }
         },
         sources: ['dm', 'text']
+      }),
+      new Command({
+        regex: /stats/,
+        usage: 'stats',
+        help: 'Lists some cool stats about the bot',
+        callback: async (message, matches) => {
+          const load = await sysinfo.currentLoad()
+          const procMem = process.memoryUsage()
+          const sysMem = await sysinfo.mem()
+          const lines = [
+            `📊📈 **Stats**`, '',
+            `🔥 **Uptime:** ${moment.duration(this.medkit.__internal.bootTime).humanize()}`,
+            `👩‍❤️‍👩 **Users Served:** ${this.medkit.client.guilds.reduce((acc, g) => {
+              return acc + g.memberCount
+            }, 0)}`,
+            `🔰 **Servers:** ${this.medkit.client.guilds.array().length}`,
+            '',
+            `⚙️ **CPU Load:** ${load.currentload.toFixed(2)}% (${load.avgload})`,
+            `⚙️ **Memory Usage:** *Hu/Ht* >> ${prettyBytes(procMem.heapUsed)}/${prettyBytes(procMem.heapTotal)} || *Sys* >> ${prettyBytes(sysMem.free)}/${prettyBytes(sysMem.total)}`,
+            `⚙️ **DB Size:** ${prettyBytes(fs.statSync(this.medkit.Data.__path).size)}`
+          ]
+          message.reply(lines.join('\n'))
+        }
       }),
       new Command({
         regex: /commands as (\badmin|mod|user|1|2|3\b)/,
