@@ -37,28 +37,22 @@ class ServerContext {
   // Modules ///
   /// //////////
 
+  async syncModules () {
+    await this.Medkit.Data._dbFetch('run', 'UPDATE servers SET modules=$modules WHERE server_id = $serverId', {
+      $serverId: this.id,
+      $modules: this.modules.join(',')
+    })
+    await this.Medkit.Commands.cache()
+  }
+
   addModule (module) {
     this.modules.push(module)
-    return new Promise((resolve, reject) => {
-      this.Medkit.Data.db.run('UPDATE servers SET modules=$modules WHERE server_id = $serverId', {
-        $serverId: this.id,
-        $modules: this.modules.join(',')
-      }, () => {
-        resolve(true)
-      })
-    })
+    return this.syncModules()
   }
 
   rmModule (module) {
     this.modules = this.modules.filter(m => m !== module)
-    return new Promise((resolve, reject) => {
-      this.Medkit.Data.db.run('UPDATE servers SET modules=$modules WHERE server_id = $serverId', {
-        $serverId: this.id,
-        $modules: this.modules.join(',')
-      }, () => {
-        resolve(true)
-      })
-    })
+    return this.syncModules()
   }
 
   hasModule (module) {
