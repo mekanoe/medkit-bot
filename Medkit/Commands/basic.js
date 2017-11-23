@@ -19,6 +19,14 @@ class BasicCmd extends CommandSet {
       //   sources: ['dm', 'text']
       // }),
       new Command({
+        regex: /whoami/,
+        hidden: true,
+        callback: (message) => {
+          message.reply(`You are **${message.UC.humanRole()}**.`)
+        },
+        sources: ['dm', 'text']
+      }),
+      new Command({
         regex: /bot/,
         hidden: true,
         callback: (message) => {
@@ -30,7 +38,7 @@ class BasicCmd extends CommandSet {
         regex: /commands$/,
         usage: 'commands',
         help: 'Shows available commands.',
-        callback: (message) => {
+        callback: async (message) => {
           let cmds = this.medkit.Commands.resolver(message)
 
           let text = ':information_desk_person: **Available commands:**\n\n' + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`*${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')

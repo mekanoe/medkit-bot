@@ -281,10 +281,11 @@ class RootCmd extends CommandSet {
 
           try {
             message.M.content = '*commands'
-            // console.log(message.M, nSC)
-            this.medkit.Commands.handler(message.M, { SC: message.SC, UC: message.UC, replyChannel: message.M.channel })
+            console.log(message.M)
+            await this.medkit.Commands.handler(message.M, { UC: message.UC })
           } catch (e) {
             console.error(`ERROR: ${e}\n${e.trace || e.stack}`)
+            throw e
           }
         },
         sources: ['dm', 'text']
