@@ -29,7 +29,7 @@ class UserContext {
       return
     }
 
-    if (this.SC.S.ownerID === this.id) {
+    if (!this.__forceRole && this.SC != null && this.SC.S.ownerID === this.id) {
       this.permissions = ROLE_ADMIN
       return
     }
