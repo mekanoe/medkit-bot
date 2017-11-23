@@ -30,7 +30,8 @@ class Lewdkit {
       let v = this.Apis[k]
       if (v.command !== undefined) {
         const cmd = new Command(v.command(k))
-
+        
+        cmd.nsfw = true
         cmd.callback = this.wrapCallback(cmd.callback)
 
         return cmd

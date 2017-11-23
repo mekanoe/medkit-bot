@@ -41,7 +41,7 @@ class BasicCmd extends CommandSet {
         callback: async (message) => {
           let cmds = this.medkit.Commands.resolver(message)
 
-          let text = ':information_desk_person: **Available commands:**\n\n' + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`*${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
+          let text = ':information_desk_person: **Available commands:**\n\n' + cmds.filter(cmd => !cmd.command.hidden).filter(cmd => !(cmd.command.nsfw && !message.M.channel.nsfw)).map(cmd => `  - \`*${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
 
           if (!message.isDM() && message.SC.hasModule('commands')) {
             text = text + `\n\n**This server also has custom commands,** type \`-commands\` for these.`

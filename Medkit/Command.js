@@ -1,5 +1,5 @@
 class Command {
-  constructor ({regex, callback, usage, hidden = false, silentAck = false, module = '', help, sources = ['text']}) {
+  constructor ({regex, callback, usage, hidden = false, silentAck = false, nsfw = false, module = '', help, sources = ['text']}) {
     this.regex = new RegExp(`^\\*?${regex.source}`, regex.flags)
     this.callback = callback
     this.sources = sources
@@ -7,6 +7,7 @@ class Command {
     this.help = help
     this.hidden = hidden
     this.silentAck = silentAck
+    this.nsfw = nsfw
 
     this.module = module // this is usually set as part of the command
                // set instead of in the constructor.
