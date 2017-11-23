@@ -14,12 +14,14 @@ class Lewdkit {
   autoimport () {
     const cmdpkg = glob.sync(path.join(__dirname, 'apis', '*.js'))
     for (let pkg of cmdpkg) {
-      const path = pkg.replace(__dirname, '.')
-      if (path[2] === '_') {
+      pkg = pkg.replace(__dirname, '.')
+      
+      if (pkg[7] === '_') {
         continue
       }
-      const p = new (require(path))(this.Medkit) // eslint-disable-line no-new
-      this.Apis[p.constructor.name.toLowerCase()] = p
+
+      const p = new (require(pkg))(this.Medkit) // eslint-disable-line no-new
+      this.Apis[path.basename(pkg).replace('.js', '')] = p
     }
   }
 
