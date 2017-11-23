@@ -85,7 +85,7 @@ class Commands {
     if (newCache.text !== undefined) {
       for (let { id } of this.medkit.client.guilds.array()) {
         const modules = [
-          ...moduleTree[id],
+          ...moduleTree[id] || [],
           ...this.defaultModules
         ]
 

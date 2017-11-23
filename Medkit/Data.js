@@ -42,9 +42,9 @@ class Data {
   constructor (medkit) {
     this.medkit = medkit
 
-    let needsMigration = false
+    this.__needsMigration = false
     if (!fs.existsSync(PATH)) {
-      needsMigration = true
+      this.__needsMigration = true
     }
 
     if (process.env.FORCE_RESET === '1') {
@@ -54,15 +54,17 @@ class Data {
       } catch (e) {
 
       }
-      needsMigration = true
+      this.__needsMigration = true
     }
 
     // console.log('db path:', PATH)
     this.__path = PATH
     this.db = new sqlite3.cached.Database(PATH)
+  }
 
-    if (needsMigration) {
-      this.__migrate()
+  async lockTasks () {
+    if (this.__needsMigration) {
+      await this.__migrate()
     }
   }
 

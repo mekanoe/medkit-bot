@@ -1,6 +1,6 @@
 ### INSTALLER/BUILDER
 FROM mhart/alpine-node:9.2
-RUN apk add --no-cache python g++ make
+RUN apk add --no-cache python g++ make git
 COPY . /src
 RUN cd /src && npm i
 

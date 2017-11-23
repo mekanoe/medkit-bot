@@ -27,6 +27,8 @@ class Medkit {
 
     // mount data
     this.Data = new Data(this)
+    
+    await this.Data.lockTasks()
 
     // setup internal data
     try {
