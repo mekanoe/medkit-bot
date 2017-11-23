@@ -1,6 +1,6 @@
 {
   "name": "medkit-bot",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "emerald discord bot",
   "main": "main.js",
   "repository": {
