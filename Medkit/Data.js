@@ -67,7 +67,7 @@ class Data {
 
   _dbFetch (op, ...args) {
     return new Promise((resolve, reject) => {
-      this.db[op].apply(this.db, [...args, (err, result) => {
+      this.db[op].apply(this.db, [...args, (err, result) => { // eslint-disable-line no-useless-call
         if (err) {
           reject(err)
         }
@@ -77,28 +77,23 @@ class Data {
     })
   }
 
-  __migrate () {
+  async __migrate () {
     console.warn('starting hot database migration')
     let sql = fs.readFileSync(`${__dirname}/../utils/dbsetup.sql`, 'utf8')
-    this.db.exec(sql, (err) => {
-      console.log('migration done, output -> \n    ', err)
-    })
+    await this._dbFetch('exec', sql)
+    console.log('migration done')
   }
 
-  getMedkitSettings () {
-    return new Promise((resolve, reject) => {
-      this.db.all('select * from settings', (err, rows) => {
-        if (err) return reject(err)
+  async getMedkitSettings () {
+    let rows = await this.db.all('select * from settings')
 
-        let outObj = {}
+    let outObj = {}
+    
+    for (let v of rows) {
+      outObj[v.key] = v.value
+    }
 
-        rows.forEach((v) => {
-          outObj[v.key] = v.value
-        })
-
-        resolve(outObj)
-      })
-    })
+    return outObj
   }
 
   setKV (table, data) {
@@ -108,20 +103,16 @@ class Data {
     return this._dbFetch('exec', q(`INSERT OR REPLACE INTO ${table} (key, value) VALUES ${values}`))
   }
 
-  getFullServerModuleTree () {
-    return new Promise((resolve, reject) => {
-      this.db.all('select modules, server_id from servers', (err, rows) => {
-        if (err) return reject(err)
+  async getFullServerModuleTree () {
+    let rows = await this._dbFetch('all', 'select modules, server_id from servers')
 
-        let outObj = {}
+    let outObj = {}
 
-        rows.forEach((v) => {
-          outObj[v.server_id] = v.modules.split(',')
-        })
+    for (let v of rows) {
+      outObj[v.server_id] = v.modules.split(',')
+    }
 
-        resolve(outObj)
-      })
-    })
+    return outObj
   }
 
   async getServerRoles (id) {
@@ -166,16 +157,8 @@ class Data {
     return server
   }
 
-  async initServer (SC) {
-    return new Promise((resolve, reject) => {
-      this.db.exec(
-        `DELETE FROM servers WHERE server_id='${SC.id}'; INSERT INTO servers (server_id, modules, logChannel) VALUES ('${SC.id}', '', '');`,
-        (err) => {
-  if (err !== null) return reject(err)
-  resolve(true)
-}
-      )
-    })
+  initServer (SC) {
+    return this._dbFetch('exec', `INSERT INTO servers (server_id, modules, logChannel) VALUES ('${SC.id}', '', '');`)
   }
 }
 

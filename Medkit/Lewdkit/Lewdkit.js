@@ -1,19 +1,6 @@
-const Command = require('../Commands/Command')
-
-const apiList = [
-  // 2d
-  'gelbooru',
-  'rule34',
-  'yandere',
-  'safebooru',
-
-  // 3d
-  'pornhub',
-  'youporn',
-
-  // etc
-  'reddit'
-]
+const Command = require('../Command')
+const glob = require('glob')
+const path = require('path')
 
 class Lewdkit {
   constructor (medkit) {
@@ -21,17 +8,17 @@ class Lewdkit {
     this.Data = medkit.Data
 
     this.Apis = {}
-    this.mountApis(apiList)
+    this.autoimport()
   }
 
-  mountApis (list) {
-    list.forEach((v) => {
-      this.Apis[v] = new (require('./apis/' + v))(this.Medkit)
-    })
+  autoimport () {
+    const cmdpkg = glob.sync(path.join(__dirname, 'apis', '*.js'))
+    for (let pkg of cmdpkg) {
+      new (require(pkg.replace(__dirname, '.')))(this.Medkit) // eslint-disable-line no-new
+    }
   }
 
   apisToCommandArray () {
-    let commands = []
     return Object.keys(this.Apis).map((k) => {
       let v = this.Apis[k]
       if (v.command !== undefined) {

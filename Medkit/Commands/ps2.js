@@ -1,5 +1,5 @@
-const CommandSet = require('./CommandSet')
-const Command = require('./Command')
+const CommandSet = require('../CommandSet')
+const Command = require('../Command')
 
 /// /
 // Root-level commands

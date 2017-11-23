@@ -29,6 +29,11 @@ class UserContext {
       return
     }
 
+    if (this.SC.S.ownerID === this.id) {
+      this.permissions = ROLE_ADMIN
+      return
+    }
+
     if (this.hasRole('admin')) {
       this.permissions = ROLE_ADMIN
       return
@@ -36,6 +41,15 @@ class UserContext {
 
     if (this.hasRole('mod')) {
       this.permissions = ROLE_MOD
+    }
+  }
+
+  humanRole () {
+    switch (this.permissions) {
+      case ROLE_USER: return 'user'
+      case ROLE_MOD: return 'mod'
+      case ROLE_ADMIN: return 'admin'
+      case ROLE_ROOT: return 'root'
     }
   }
 

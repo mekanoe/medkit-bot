@@ -1,4 +1,8 @@
-const Command = require('./Commands/Command')
+const moment = require('moment-timezone')
+const glob = require('glob')
+const path = require('path')
+
+const Command = require('./Command')
 const MessageContext = require('./MessageContext')
 const ServerContext = require('./ServerContext')
 const UserContext = require('./UserContext')
@@ -25,10 +29,11 @@ class Commands {
     this.__rootCmds = [] // a set of global commands for maintenance
   }
 
-  import (...list) {
-    list.forEach((m) => {
-      new (require(`./Commands/${m}`))(this.medkit) // eslint-disable-line no-new
-    })
+  autoimport () {
+    const cmdpkg = glob.sync(path.join(__dirname, 'Commands', '*.js'))
+    for (let pkg of cmdpkg) {
+      new (require(pkg.replace(__dirname, '.')))(this.medkit) // eslint-disable-line no-new
+    }
   }
 
   register (command, moduleName, opts) {
@@ -41,93 +46,71 @@ class Commands {
     }
   }
 
-  /// /
-  // Builds a few command trees to speed up command searches.
-  cache () {
-    return new Promise((resolve, reject) => {
-      this.medkit.Data.getFullServerModuleTree().then((moduleTree) => {
-        let newCache = {}
+  async cache () {
+    const moduleTree = await this.medkit.Data.getFullServerModuleTree()
+    const newCache = {}
 
-        // L1: source (text, dm)
-        //    put all relevant commands into __tmp
-        //    do L2 based on __tmp
-        //    delete __tmp
-
-        this.__registry.forEach((v) => {
-          let { command: { sources } } = v
-
-          sources.forEach((s) => {
-            if (newCache[s] === undefined) {
-              newCache[s] = { __tmp: [] }
-            }
-
-            newCache[s].__tmp.push(v)
-          })
-        })
-        // console.log('L1 done')
-
-        if (newCache.dm !== undefined) {
-          // L2-A: DM perms (server modules don't apply)
-          newCache.dm.__tmp.forEach((v) => {
-            let { opts: { perms } } = v
-            if (perms === undefined) {
-              perms = 3
-            }
-
-            if (newCache.dm[perms] === undefined) {
-              newCache.dm[perms] = []
-            }
-
-            newCache.dm[perms].push(v)
-          })
-
-          delete newCache.dm.__tmp
-          // console.log('L2-A done')
+    // L1: source (text, dm)
+    //    put all relevant commands into __tmp
+    //    do L2 based on __tmp
+    //    delete __tmp
+    for (let command of this.__registry) {
+      for (let s of command.command.sources) {
+        if (newCache[s] === undefined) {
+          newCache[s] = { __tmp: [] }
         }
 
-        if (newCache.text !== undefined) {
-          // L2-B: by server based on modules
+        newCache[s].__tmp.push(command)
+      }
+    }
 
-          // Generate servers
-          this.medkit.client.guilds.array().forEach((server) => {
-            let modules = [].concat(moduleTree[server.id], this.defaultModules)
-
-            // console.log(`server <${server.name}> modules: ${modules.join(',')}`)
-
-            newCache.text[server.id] = {
-              __tmp: newCache.text.__tmp.filter(v => modules.includes(v.moduleName))
-            }
-          })
-
-          delete newCache.text.__tmp
-          // console.log('L2-B module filter done')
-
-          // L3: by perms
-          this.medkit.client.guilds.array().forEach((server) => {
-            newCache.text[server.id].__tmp.forEach((v) => {
-              let { opts: { perms } } = v
-              if (perms === undefined) {
-                perms = 3
-              }
-
-              if (newCache.text[server.id][perms] === undefined) {
-                newCache.text[server.id][perms] = []
-              }
-
-              newCache.text[server.id][perms].push(v)
-            })
-
-            delete newCache.text[server.id].__tmp
-            // console.log('L3 perms map done')
-          })
+    if (newCache.dm !== undefined) {
+      // L2-A: DM perms (server modules don't apply)
+      for (let command of newCache.dm.__tmp) {
+        let { opts: { perms } } = command
+        if (perms === undefined) {
+          perms = 3
         }
 
-        this.__cache = newCache
+        if (newCache.dm[perms] === undefined) {
+          newCache.dm[perms] = []
+        }
 
-        resolve(true)
-        // console.log('done')
-      })
-    })
+        newCache.dm[perms].push(command)
+      }
+
+      delete newCache.dm.__tmp
+    }
+
+    if (newCache.text !== undefined) {
+      for (let { id } of this.medkit.client.guilds.array()) {
+        const modules = [
+          ...moduleTree[id],
+          ...this.defaultModules
+        ]
+
+        const cmds = newCache.text.__tmp.filter(v => modules.includes(v.moduleName))
+        
+        newCache.text[id] = []
+
+        for (let cmd of cmds) {
+          let { opts: { perms } } = cmd
+          if (perms === undefined) {
+            perms = 3
+          }
+
+          if (newCache.text[id][perms] === undefined) {
+            newCache.text[id][perms] = []
+          }
+
+          newCache.text[id][perms].push(cmd)
+        }
+      }
+
+      delete newCache.text.__tmp
+    }
+
+    this.__cache = newCache
   }
 
   /// /
@@ -147,8 +130,7 @@ class Commands {
       const server = await this.medkit.Data.getServer((SC !== null) ? SC.id : message.guild.id)
       SC = SC || new ServerContext(this.medkit, message.guild)
 
-      if (server === null) {
-      } else {
+      if (server != null) {
         SC.attachData(server)
       }
 
@@ -161,16 +143,18 @@ class Commands {
 
   /// /
   //
-  matcher (cmds, mc) {
-    cmds.forEach((i) => {
-      let {command} = i
+  async matcher (cmds, mc) {
+    for (let {command} of cmds) {
       let match = command.regex.exec(mc.text)
       if (match !== null) {
         console.log(`CMD ${mc.UC.U.username}#${mc.UC.U.discriminator}: ${mc.text}`)
-        command.run({medkit: this.medkit}, mc, match.slice(1))
-        return false
+        try {
+          await command.run({medkit: this.medkit}, mc, match.slice(1))
+        } catch (e) {
+          this.medkit.glc(`❌ **Command errored:**\nUser > <@${mc.UC.id}> (${mc.UC.U.username}#${mc.UC.U.discriminator}) (perms: **${mc.UC.humanRole()}**)\nChannel > <#${mc.M.channel.id}> in ${mc.SC.S.name}\nInput > \`${mc.text}\`\nTrace > \`\`\`${e.trace || e.stack}\`\`\``)
+        }
       }
-    })
+    }
   }
 
   /// /
@@ -291,9 +275,9 @@ class Commands {
 
       try {
         if (message.content[0] === '-') {
-          this.customMatcher(mc)
+          await this.customMatcher(mc)
         } else {
-          this.matcher(set, mc)
+          await this.matcher(set, mc)
         }
       } catch (e) {
         console.error(`ERROR: ${e}\n${e.trace || e.stack}`)
@@ -301,6 +285,10 @@ class Commands {
 
       if (this.medkit.__internal.profiler && start !== undefined) {
         mc.reply(`**\\*\\*PROFILER:** took ${new Date() - start}ms.`)
+      }
+
+      if (message.channel.type === 'dm') {
+        this.medkit.glc(`**DM** from <@${mc.UC.id}> at ${moment().tz('UTC').format('MMMM Do YYYY, h:mm:ss a')} >>\n\n${mc.text}`)
       }
     }
   }

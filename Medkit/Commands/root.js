@@ -1,8 +1,8 @@
-const CommandSet = require('./CommandSet')
-const Command = require('./Command')
+const CommandSet = require('../CommandSet')
+const Command = require('../Command')
 const { NewSC, NewUC } = require('../ContextUtils')
 
-/// /
+/// ///////
 // Root-level commands
 class RootCmd extends CommandSet {
   _register (as) {
@@ -20,8 +20,10 @@ class RootCmd extends CommandSet {
         sources: ['dm', 'text']
       }),
       new Command({
+        // deprecated as of 23 nov 17
         regex: /init server/,
         usage: 'init server',
+        hidden: true,
         help: 'Initializes this server in the DB. (This also resets the data.)',
         callback: (message) => {
           this.medkit.Data.initServer(message.SC).then(() => {
@@ -38,8 +40,8 @@ class RootCmd extends CommandSet {
           message.SC.addModule(matches[0])
           .then(this.medkit.Commands.cache())
           .then(() => {
-  message.reply(`Module ${matches[0]} added! Check the new stuff with \`*commands\`!`)
-})
+            message.reply(`Module ${matches[0]} added! Check the new stuff with \`*commands\`!`)
+          })
         },
         sources: ['text']
       }),
@@ -71,6 +73,35 @@ class RootCmd extends CommandSet {
           this.medkit.glc(matches[0])
         },
         sources: ['dm', 'text']
+      }),
+      new Command({
+        regex: /say (.*)/,
+        usage: 'say <text>',
+        help: 'This bot speaks.',
+        silentAck: true,
+        callback: (message, matches) => {
+          message.reply(matches[0])
+        }
+      }),
+      new Command({
+        regex: /sayin ([0-9]+) (.*)/,
+        usage: 'sayin <channel id> <text>',
+        help: 'This bot speaks in another channel.',
+        callback: (message, matches) => {
+          const ch = this.medkit.client.channels.get(matches[0])
+          ch.send(matches[1])
+
+          message.reply(`**Message** sent to #${ch.name} in ${ch.guild.name} >>\n\n${matches[1]}`)
+        }
+      }),
+      new Command({
+        regex: /dmto ([0-9]+) (.*)/,
+        usage: 'dmto <user id> <text>',
+        help: 'This bot speaks to someone.',
+        callback: (message, matches) => {
+          this.medkit.client.users.get(matches[0]).send(matches[1])
+          message.reply(`**DM** sent to <@${matches[0]}> >>\n\n${matches[1]}`)          
+        }
       }),
       new Command({
         regex: /glcset ?([0-9]+)?/,
@@ -109,7 +140,7 @@ class RootCmd extends CommandSet {
           setTimeout(async () => {
             try {
               let url = ''
-              
+
               if (message.M.attachments.length > 0) {
                 url = message.M.attachments.first().url
               } else if (message.M.embeds.length > 0) {
@@ -133,7 +164,8 @@ class RootCmd extends CommandSet {
       new Command({
         regex: /recache/,
         usage: 'recache',
-        help: '**DANGER:** Recaches command tree. This is expensive.',
+        help: 'Recaches command tree in case something awful happened.',
+        hidden: true,
         sources: ['dm', 'text'],
         callback: (message) => {
           let start = new Date()
@@ -157,6 +189,7 @@ class RootCmd extends CommandSet {
       new Command({
         regex: /debug cache (\bon|off\b)/,
         usage: 'debug cache on|off',
+        hidden: true,
         help: 'Turns on/off the command tree cache.',
         callback: (message, matches) => {
           this.medkit.__internal.noCache = matches[0] === 'off'
@@ -167,6 +200,7 @@ class RootCmd extends CommandSet {
       new Command({
         regex: /debug profiler (\bon|off\b)/,
         usage: 'debug profiler on|off',
+        hidden: true,
         help: 'Start/stop output profiling data.',
         callback: (message, matches) => {
           this.medkit.__internal.profiler = matches[0] === 'on'
@@ -180,7 +214,6 @@ class RootCmd extends CommandSet {
         help: 'Run the command as it would in another server',
         callback: async (message, matches) => {
           // console.log(matches[0], matches[1])
-
           try {
             const nSC = await NewSC(this.medkit, matches[0])
             const nUC = await NewUC(this.medkit, message.UC.id, nSC)
@@ -197,7 +230,7 @@ class RootCmd extends CommandSet {
         regex: /commands as (\badmin|mod|user|1|2|3\b)/,
         usage: 'commands as admin|mod|user',
         help: 'Figure out commands for specific roles',
-        callback: (message, matches) => {
+        callback: async (message, matches) => {
           let userLevel = 0
 
           switch (matches[0]) {
@@ -218,17 +251,13 @@ class RootCmd extends CommandSet {
           message.UC.permissions = userLevel
           message.UC.__forceRole = true
 
-          let cmds = this.medkit.Commands.resolver(message)
-
-          let text = ':information_desk_person: **Available commands:**\n\n' + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`*${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
-
-          if (message.SC.hasModule('commands')) {
-            text = text + `\n\n**This server also has custom commands,** type \`-commands\` for these.`
+          try {
+            message.M.content = '*commands'
+            // console.log(message.M, nSC)
+            this.medkit.Commands.handler(message.M, { SC: message.SC, UC: message.UC, replyChannel: message.M.channel })
+          } catch (e) {
+            console.error(`ERROR: ${e}\n${e.trace || e.stack}`)
           }
-
-          console.log('length', text.length)
-
-          message.reply(text)
         },
         sources: ['dm', 'text']
       })

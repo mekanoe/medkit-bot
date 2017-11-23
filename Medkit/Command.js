@@ -16,9 +16,8 @@ class Command {
     return text.match(this.regex)
   }
 
-  run (ctx, msg, matches) {
-    let returnVal = this.callback.call(ctx, msg, matches)
-
+  async run (ctx, msg, matches) {
+    let returnVal = await this.callback.call(ctx, msg, matches)
     if (this.silentAck && returnVal !== false) {
       msg.M.delete()
     }

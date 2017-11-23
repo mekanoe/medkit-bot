@@ -30,7 +30,7 @@ class ServerContext {
       return
     }
 
-    this.Medkit.client.channels.get(this.logChannel).sendMessage(text)
+    this.Medkit.client.channels.get(this.logChannel).send(text)
   }
 
   /// ////////////
@@ -119,13 +119,8 @@ class ServerContext {
   // Misc ///
   /// ///////
 
-  setLogChannel (channel) {
-    return new Promise((resolve, reject) => {
-      this.Medkit.Data.db.run('UPDATE servers SET logChannel=? WHERE server_id=?', channel, this.id, (err) => {
-        if (err !== null) return reject(err)
-        resolve(true)
-      })
-    })
+  async setLogChannel (channel) {
+    await this.Medkit.Data._dbFetch('run', 'UPDATE servers SET logChannel=? WHERE server_id=?', channel, this.id)
   }
 }
 

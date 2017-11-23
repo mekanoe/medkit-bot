@@ -5,14 +5,19 @@ class Listener {
 
     let alreadyReady = false
 
-    this.Client.on('ready', () => {
+    this.Client.on('ready', async () => {
       if (alreadyReady) {
         // medkit.glc('Discord client sent ready and I was already ready.')
         return
       }
 
       alreadyReady = true
-      medkit.readyScript.call(medkit)
+      try {
+        await medkit.readyScript()
+      } catch (err) {
+        console.error('ready script scuffed', err)
+        process.exit(2)
+      }
     })
     this.Client.on('message', medkit.Commands.handler.bind(medkit.Commands))
     this.Client.on('guildCreate', async guild => {

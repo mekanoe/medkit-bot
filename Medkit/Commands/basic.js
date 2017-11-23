@@ -1,5 +1,5 @@
-const CommandSet = require('./CommandSet')
-const Command = require('./Command')
+const CommandSet = require('../CommandSet')
+const Command = require('../Command')
 
 /// /
 // Root-level commands
@@ -35,7 +35,7 @@ class BasicCmd extends CommandSet {
 
           let text = ':information_desk_person: **Available commands:**\n\n' + cmds.filter(cmd => !cmd.command.hidden).map(cmd => `  - \`*${cmd.command.usage}\` \n    ${cmd.command.help}`).join('\n\n')
 
-          if (message.SC.hasModule('commands')) {
+          if (!message.isDM() && message.SC.hasModule('commands')) {
             text = text + `\n\n**This server also has custom commands,** type \`-commands\` for these.`
           }
 
