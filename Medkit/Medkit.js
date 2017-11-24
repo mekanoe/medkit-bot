@@ -47,13 +47,16 @@ class Medkit {
 
     // get discord client, mount working stuff
     this.client = new discord.Client()
-
+    
     this.Moderation = new Moderation(this)
     this.Commands = new Commands(this)
     this.Listener = new Listener(this)
     this.Lewdkit = new Lewdkit(this)
-
-      // discord login
+    
+    setTimeout(() => {
+      this.setStatus(this.__internal.settings.status_game)
+    }, 5000)
+    
     this.client.login(process.env.DISCORD_TOKEN)
   }
 
@@ -81,6 +84,11 @@ class Medkit {
     if (llcId !== '') {
       this.client.channels.get(llcId).send(text)
     }
+  }
+
+  setStatus (msg) {
+    console.log('status change => ', msg)
+    this.client.user.setGame(msg)
   }
 
   /// /

@@ -138,6 +138,16 @@ class RootCmd extends CommandSet {
         sources: ['dm', 'text']
       }),
       new Command({
+        regex: /set status (.*)/,
+        usage: 'set status <status>',
+        help: 'Sets my status.',
+        callback: (message, matches) => {
+          this.medkit.patchSettings({ status_game: matches[0] })
+          this.medkit.setStatus(matches[0])
+        },
+        sources: ['dm', 'text']
+      }),
+      new Command({
         regex: /set avatar/,
         usage: 'set avatar',
         help: 'Sets my avatar to the attached image.',
@@ -189,6 +199,14 @@ class RootCmd extends CommandSet {
         callback: (message) => {
           message.reply('Stopping. Bye.')
           setTimeout(() => { process.exit(0) }, 250)
+        }
+      }),
+      new Command({
+        regex: /get settings/,
+        usage: 'get settings',
+        sources: ['dm', 'text'],
+        callback: (message) => {
+          message.reply('```js\n' + JSON.stringify(this.medkit.__internal.settings, null, '  ') + '```')
         }
       }),
       new Command({
