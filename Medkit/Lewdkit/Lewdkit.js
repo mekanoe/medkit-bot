@@ -40,9 +40,9 @@ class Lewdkit {
   }
 
   wrapCallback (cb) {
-    return (message, matches) => {
+    return async (message, matches) => {
       if (message.M.channel.nsfw) {
-        cb(message, matches)
+        await cb(message, matches)
       }
     }
   }

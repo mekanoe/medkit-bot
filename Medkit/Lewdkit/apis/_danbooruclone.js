@@ -6,10 +6,10 @@ class DanbooruClone {
   constructor (medkit) {
     this.Medkit = medkit
     this.limit = 50
-    this.generateRandom = medkit.generateRandom.bind(medkit, this.limit)
+    this.generateRandom = medkit.generateRandom.bind(medkit)
     this.domain = 'http://danbooru.donmai.us'
     this.path = `/index.php?page=dapi&s=post&q=index&limit=${this.limit}&tags=`
-    this.defaultTags = '-furry'
+    this.defaultTags = ['-furry']
   }
 
   command (name) {
@@ -17,32 +17,49 @@ class DanbooruClone {
       regex: new RegExp(`${name} (.*)`),
       usage: `${name} <query>`,
       help: `Looks up some stuff on ${name}.`,
-      callback: (message, matches) => {
-        let c = message.Medkit.Lewdkit.Apis[name]
-
-        c.query(matches[0]).then((data) => {
+      callback: async (message, matches) => {
+        try {
+          const c = message.Medkit.Lewdkit.Apis[name]
+          const data = await c.query(matches[0])
+          
+          if (data == null) {
+            message.reply(`<:akkoshrug:387846714414989312> Couldn't find anything.`)
+            return
+          }
+          
           message.reply(c.humanize(data))
-        })
+        } catch (err) {
+          throw err
+        }
       },
       sources: ['text']
     }
   }
 
-  query (tags) {
-    return new Promise((resolve, reject) => {
-      superagent
-       .get(`${this.domain}${this.path}${tags} ${this.defaultTags}`)
-       .then((data) => {
-         parseString(data.text, (err, obj) => {
-           if (err != null) {
-             reject(err)
-           }
+  async query (tags) {
+    const url = `${this.domain}${this.path}${[...tags.split(' '), ...this.defaultTags].join('+')}`
+    console.log(url)
+    const data = await superagent.get(url)
+    const { posts } = await this.parseXml(data.text)
+    console.log(posts)
 
-           let rv = obj.posts.post[this.generateRandom()]
-           console.log(rv)
-           resolve(rv)
-         })
-       })
+    if (posts.post === undefined || posts.post.length === '0') {
+      return null
+    }
+
+    let rv = posts.post[this.generateRandom(posts.post.length)]
+    return rv
+  }
+
+  parseXml (xml) {
+    return new Promise((resolve, reject) => {
+      parseString(xml, (err, obj) => {
+        if (err != null) {
+          reject(err)
+        }
+
+        resolve(obj)
+      })
     })
   }
 
