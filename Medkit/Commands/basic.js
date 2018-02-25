@@ -1,5 +1,6 @@
 const CommandSet = require('../CommandSet')
 const Command = require('../Command')
+const moment = require('moment-timezone')
 
 /// /
 // Root-level commands
@@ -18,6 +19,20 @@ class BasicCmd extends CommandSet {
       //   },
       //   sources: ['dm', 'text']
       // }),
+      new Command({
+        regex: /ping/,
+        callback: (message) => {
+          message.reply(`🏓 **Pong.**\n⌚ Got this message in ${Date.now() - message.M.createdTimestamp}ms.`)
+        },
+        sources: ['dm', 'text']
+      }),
+      new Command({
+        regex: /uptime/,
+        callback: (message) => {
+          message.reply(`🔥 **Uptime:** ${moment(this.medkit.__internal.bootTime).fromNow()}`)
+        },
+        sources: ['dm', 'text']
+      }),
       new Command({
         regex: /whoami/,
         hidden: true,
