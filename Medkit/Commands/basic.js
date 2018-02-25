@@ -21,6 +21,7 @@ class BasicCmd extends CommandSet {
       // }),
       new Command({
         regex: /ping/,
+        help: 'Checks my latency and liveness.',
         callback: (message) => {
           message.reply(`🏓 **Pong.**\n⌚ Got this message in ${Date.now() - message.M.createdTimestamp}ms.`)
         },
@@ -28,6 +29,7 @@ class BasicCmd extends CommandSet {
       }),
       new Command({
         regex: /uptime/,
+        help: 'Checks my uptime.',
         callback: (message) => {
           message.reply(`🔥 **Uptime:** ${moment(this.medkit.__internal.bootTime).fromNow()}`)
         },
@@ -60,12 +62,6 @@ class BasicCmd extends CommandSet {
 
           if (!message.isDM() && message.SC.hasModule('commands')) {
             text = text + `\n\n**This server also has custom commands,** type \`-commands\` for these.`
-          }
-
-          console.log('length', text.length)
-
-          if (text.length >= 2000) {
-            message.reply(':no_good: You have too many commands! You might need to ask a bot operator for help.')
           }
 
           message.reply(text)

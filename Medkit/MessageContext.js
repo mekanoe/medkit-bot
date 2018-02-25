@@ -1,6 +1,3 @@
-const UserContext = require('./UserContext')
-const ServerContext = require('./ServerContext')
-
 /// /
 // Message context. Wraps a Discord#Message into more medkit-specific things.
 class MessageContext {
@@ -20,8 +17,11 @@ class MessageContext {
     return this.source === 'dm'
   }
 
-  reply (text) {
-    return this.__replyChannel.send(text)
+  reply (text, disableEveryone = true) {
+    return this.__replyChannel.send(text, {
+      split: true,
+      disableEveryone
+    })
   }
 }
 

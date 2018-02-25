@@ -27,7 +27,7 @@ class Medkit {
 
     // mount data
     this.Data = new Data(this)
-    
+
     await this.Data.lockTasks()
 
     // setup internal data
@@ -46,17 +46,19 @@ class Medkit {
     this.__internal.bootTime = new Date()
 
     // get discord client, mount working stuff
-    this.client = new discord.Client()
-    
+    this.client = new discord.Client({
+      disableEveryone: true
+    })
+
     this.Moderation = new Moderation(this)
     this.Commands = new Commands(this)
     this.Listener = new Listener(this)
     this.Lewdkit = new Lewdkit(this)
-    
+
     setTimeout(() => {
       this.setStatus(this.__internal.settings.status_game)
     }, 5000)
-    
+
     this.client.login(process.env.DISCORD_TOKEN)
   }
 

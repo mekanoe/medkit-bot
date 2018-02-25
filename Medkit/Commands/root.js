@@ -273,6 +273,15 @@ class RootCmd extends CommandSet {
         }
       }),
       new Command({
+        regex: /list servers/,
+        usage: 'list servers',
+        help: 'Lists interesting details about every server.',
+        callback: async (message) => {
+          const t = this.medkit.client.guilds.array().map(g => `🌟 **${g.name}**\n👩‍❤️‍👩 ${g.memberCount} members`).join('\n\n')
+          message.reply(t)
+        }
+      }),
+      new Command({
         regex: /commands as (\badmin|mod|user|1|2|3\b)/,
         usage: 'commands as admin|mod|user',
         help: 'Figure out commands for specific roles',
