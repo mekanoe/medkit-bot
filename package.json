@@ -8,27 +8,28 @@
     "type": "git"
   },
   "scripts": {
-    "standard": "standard"
+    "standard": "standard",
+    "start": "node main.js"
   },
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.2.1",
-    "dotenv": "^4.0.0",
+    "discord.js": "^11.3.0",
+    "dotenv": "^5.0.0",
     "erlpack": "github:discordapp/erlpack",
     "glob": "^7.1.2",
     "immutable": "^3.8.2",
-    "moment": "^2.19.2",
+    "moment": "^2.20.1",
     "moment-timezone": "^0.5.14",
     "parse-duration": "^0.1.1",
     "pretty-bytes": "^4.0.2",
     "sqlite3": "3.1.13",
-    "superagent": "^3.8.1",
-    "systeminformation": "^3.33.6",
+    "superagent": "^3.8.2",
+    "systeminformation": "^3.37.4",
     "uws": "^9.14.0",
     "xml2js": "^0.4.19",
-    "zlib-sync": "^0.1.3"
+    "zlib-sync": "^0.1.4"
   },
   "devDependencies": {
-    "standard": "^10.0.3"
+    "standard": "^11.0.0"
   }
 }
