@@ -259,14 +259,14 @@ class RootCmd extends CommandSet {
           const sysMem = await sysinfo.mem()
           const lines = [
             `📊📈 **Stats**`, '',
-            `🔥 **Uptime:** ${moment.duration(this.medkit.__internal.bootTime).humanize()}`,
+            `🔥 **Uptime:** ${moment(this.medkit.__internal.bootTime).fromNow()}`,
             `👩‍❤️‍👩 **Users Served:** ${this.medkit.client.guilds.reduce((acc, g) => {
               return acc + g.memberCount
             }, 0)}`,
             `🔰 **Servers:** ${this.medkit.client.guilds.array().length}`,
             '',
             `⚙️ **CPU Load:** *Avg* >> ${load.avgload}% || *Current* >> ${load.currentload.toFixed(2)}%`,
-            `⚙️ **Memory Usage:** *Hu/Ht* >> ${prettyBytes(procMem.heapUsed)}/${prettyBytes(procMem.heapTotal)} || *Sys* >> ${prettyBytes(sysMem.free)}/${prettyBytes(sysMem.total)}`,
+            `⚙️ **Memory Usage:** *Hu/Ht* >> ${prettyBytes(procMem.heapUsed)}/${prettyBytes(procMem.heapTotal)} || *Sys Free* >> ${prettyBytes(sysMem.free)}/${prettyBytes(sysMem.total)}`,
             `⚙️ **DB Size:** ${prettyBytes(fs.statSync(this.medkit.Data.__path).size)}`
           ]
           message.reply(lines.join('\n'))
