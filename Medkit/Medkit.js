@@ -90,7 +90,7 @@ class Medkit {
 
   setStatus (msg) {
     console.log('status change => ', msg)
-    this.client.user.setGame(msg)
+    this.client.user.setActivity(msg)
   }
 
   /// /
