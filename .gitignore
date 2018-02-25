@@ -4,3 +4,4 @@ node_modules
 medkit-data.db3
 npm-error.log
 yarn-error.log
+\.vscode/
