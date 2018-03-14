@@ -15,8 +15,17 @@ class AdminCmd extends CommandSet {
         callback: async (message, matches) => {
           const roles = matches[0].split(',').map(x => x.trim())
           for (let r of roles) {
-            await message.SC.S.createRole({ name: r, permissions: 0 })
+            let color
+            if (r.indexOf('#') !== -1) {
+              const rs = r.split('#')
+              r = rs[0].trim()
+              color = `#${rs[1]}`
+            }
+
+            await message.SC.S.createRole({ name: r, permissions: 0, color })
           }
+
+          message.reply(`👍 Woo! Created role${(roles.length > 1) ? 's' : ''} ${matches[0]}.`)
         }
       }),
       new Command({
