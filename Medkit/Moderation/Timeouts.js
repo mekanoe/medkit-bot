@@ -4,7 +4,12 @@ const parseDuration = require('parse-duration')
 class Timeouts {
   constructor (medkit) {
     this.Medkit = medkit
-    setInterval(() => { this.processTimeouts() }, 5000)
+    setInterval(async () => {
+      try {
+        await this.processTimeouts()
+      } catch (e) {
+      }
+    }, 5000)
   }
 
   async addTimeout ({SC, UC, user_id, duration, reason}) {
@@ -38,21 +43,33 @@ class Timeouts {
         }
       }
     } catch (e) {
-      console.error('timeout processing error: ', e)
+      this.Medkit.internalError({
+        Module: 'Moderation/Timeouts',
+        System: 'processTimeouts'
+      }, e)
     }
   }
 
   async removeTimeout ({SC, userId, modId = null}) {
-    let UC = await NewUC(this.Medkit, userId, SC)
-    UC.GM.removeRole(SC.roles.timeout)
+    try {
+      let UC = await NewUC(this.Medkit, userId, SC)
+      UC.GM.removeRole(SC.roles.timeout)
+      let extra = ''
 
-    let extra = ''
+      if (modId !== null) {
+        extra = `This was reversed by <@${modId}>.`
+      }
 
-    if (modId !== null) {
-      extra = `This was reversed by <@${modId}>.`
+      SC.llc(`<@${userId}> is no longer timed out. ${extra}`)
+    } catch (e) {
+      this.Medkit.internalError({
+        Module: 'Moderation/Timeouts',
+        System: 'removeTimeout',
+        User: `<@${userId}>`,
+        Server: SC.S.name
+      }, e)
     }
 
-    SC.llc(`<@${userId}> is no longer timed out. ${extra}`)
     await this.Medkit.Data._dbFetch('run', 'DELETE FROM timeouts WHERE user_id = ? AND server_id = ?', userId, SC.id)
   }
 }

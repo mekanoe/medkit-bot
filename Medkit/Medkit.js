@@ -88,6 +88,14 @@ class Medkit {
     }
   }
 
+  msgError (mc, e) {
+    this.glc(`❌ **Command errored:**\nUser > <@${mc.UC.id}> (${mc.UC.U.username}#${mc.UC.U.discriminator}) (perms: **${mc.UC.humanRole()}**)\nChannel > <#${mc.M.channel.id}> in ${mc.SC.S.name}\nInput > \`${mc.text}\`\nTrace > \`\`\`${e.trace || e.stack}\`\`\``)
+  }
+
+  internalError (ctx, e) {
+    this.glc(`❌ **System errored:**\n${Object.keys(ctx).map(k => `${k} > ${ctx[k]}`).join('\n')}\nTrace > \`\`\`${e.trace || e.stack}\`\`\``)
+  }
+
   setStatus (msg) {
     console.log('status change => ', msg)
     this.client.user.setActivity(msg)

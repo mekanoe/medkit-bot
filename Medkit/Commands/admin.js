@@ -10,6 +10,16 @@ class AdminCmd extends CommandSet {
   _boot () {
     this.commands = [
       new Command({
+        regex: /create vanity roles? (.+)/,
+        help: 'Creates one or more roles with no permissions',
+        callback: async (message, matches) => {
+          const roles = matches[0].split(',').map(x => x.trim())
+          for (let r of roles) {
+            await message.SC.S.createRole({ name: r, permissions: 0 })
+          }
+        }
+      }),
+      new Command({
         regex: /add role ([a-z0-9_:-]+) (.+)/,
         usage: 'add role <type> <name>',
         help: 'Adds a role for use by anything.',

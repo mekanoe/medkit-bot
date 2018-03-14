@@ -90,7 +90,7 @@ class Commands {
         ]
 
         const cmds = newCache.text.__tmp.filter(v => modules.includes(v.moduleName))
-        
+
         newCache.text[id] = []
 
         for (let cmd of cmds) {
@@ -151,7 +151,7 @@ class Commands {
         try {
           await command.run({medkit: this.medkit}, mc, match.slice(1))
         } catch (e) {
-          this.medkit.glc(`❌ **Command errored:**\nUser > <@${mc.UC.id}> (${mc.UC.U.username}#${mc.UC.U.discriminator}) (perms: **${mc.UC.humanRole()}**)\nChannel > <#${mc.M.channel.id}> in ${mc.SC.S.name}\nInput > \`${mc.text}\`\nTrace > \`\`\`${e.trace || e.stack}\`\`\``)
+          this.medkit.msgError(mc, e)
         }
       }
     }
