@@ -33,6 +33,10 @@ class ServerContext {
     this.Medkit.client.channels.get(this.logChannel).send(text)
   }
 
+  gm (userID) {
+    return this.S.members.get(userID) || this.S.fetchMember(userID, true)
+  }
+
   /// ////////////
   // Modules ///
   /// //////////

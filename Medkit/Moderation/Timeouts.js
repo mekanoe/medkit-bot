@@ -12,14 +12,14 @@ class Timeouts {
     }, 5000)
   }
 
-  async addTimeout ({SC, UC, user_id, duration, reason}) {
+  async addTimeout ({SC, UC, userID, duration, reason}) {
     let date = new Date()
     let len = parseDuration(duration)
     let now = date.getTime()
     let then = now + len
 
-    SC.S.member(user_id).addRole(SC.roles.timeout)
-    await this.Medkit.Data._dbFetch('run', 'INSERT INTO timeouts (server_id, user_id, mod_user_id, start_time, end_time, duration, reason) VALUES (?, ?, ?, ?, ?, ?, ?)', SC.id, user_id, UC.id, now, then, len, reason)
+    SC.gm(userID).addRole(SC.roles.timeout)
+    await this.Medkit.Data._dbFetch('run', 'INSERT INTO timeouts (server_id, user_id, mod_user_id, start_time, end_time, duration, reason) VALUES (?, ?, ?, ?, ?, ?, ?)', SC.id, userID, UC.id, now, then, len, reason)
   }
 
   getTimeouts ({SC}) {
@@ -28,17 +28,17 @@ class Timeouts {
 
   async processTimeouts () {
     try {
-      const rows = await this.Medkit.Data._dbFetch('all', 'SELECT server_id, user_id FROM timeouts WHERE end_time <= ?', Date.now())
+      const rows = await this.Medkit.Data._dbFetch('all', 'SELECT server_id as serverID, user_id as userID FROM timeouts WHERE end_time <= ?', Date.now())
 
       const scCache = {}
 
-      for (let {server_id, user_id} of rows) {
-        if (scCache[server_id] !== undefined) {
-          this.removeTimeout({SC: scCache[server_id], userId: user_id})
+      for (let {serverID, userID} of rows) {
+        if (scCache[serverID] !== undefined) {
+          this.removeTimeout({SC: scCache[serverID], userId: userID})
         } else {
-          NewSC(this.Medkit, server_id).then((SC) => {
+          NewSC(this.Medkit, serverID).then((SC) => {
             scCache[SC.id] = SC
-            this.removeTimeout({SC, userId: user_id})
+            this.removeTimeout({SC, userID})
           })
         }
       }
@@ -50,27 +50,27 @@ class Timeouts {
     }
   }
 
-  async removeTimeout ({SC, userId, modId = null}) {
+  async removeTimeout ({SC, userID, modID = null}) {
     try {
-      let UC = await NewUC(this.Medkit, userId, SC)
+      let UC = await NewUC(this.Medkit, userID, SC)
       UC.GM.removeRole(SC.roles.timeout)
       let extra = ''
 
-      if (modId !== null) {
-        extra = `This was reversed by <@${modId}>.`
+      if (modID !== null) {
+        extra = `This was reversed by <@${modID}>.`
       }
 
-      SC.llc(`<@${userId}> is no longer timed out. ${extra}`)
+      SC.llc(`<@${userID}> is no longer timed out. ${extra}`)
     } catch (e) {
       this.Medkit.internalError({
         Module: 'Moderation/Timeouts',
         System: 'removeTimeout',
-        User: `<@${userId}>`,
+        User: `<@${userID}>`,
         Server: SC.S.name
       }, e)
     }
 
-    await this.Medkit.Data._dbFetch('run', 'DELETE FROM timeouts WHERE user_id = ? AND server_id = ?', userId, SC.id)
+    await this.Medkit.Data._dbFetch('run', 'DELETE FROM timeouts WHERE user_id = ? AND server_id = ?', userID, SC.id)
   }
 }
 

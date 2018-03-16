@@ -20,14 +20,6 @@ class BasicCmd extends CommandSet {
       //   sources: ['dm', 'text']
       // }),
       new Command({
-        regex: /ping/,
-        help: 'Checks my latency and liveness.',
-        callback: (message) => {
-          message.reply(`🏓 **Pong.**\n⌚ Got this message in ${Date.now() - message.M.createdTimestamp}ms.`)
-        },
-        sources: ['dm', 'text']
-      }),
-      new Command({
         regex: /uptime/,
         help: 'Checks my uptime.',
         callback: (message) => {

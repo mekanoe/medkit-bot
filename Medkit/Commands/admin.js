@@ -47,6 +47,14 @@ class AdminCmd extends CommandSet {
         sources: ['text']
       }),
       new Command({
+        regex: /ping/,
+        help: 'Checks my latency and liveness.',
+        callback: (message) => {
+          message.reply(`🏓 **Pong.**\n⌚ Got this message in ${Date.now() - message.M.createdTimestamp}ms.`)
+        },
+        sources: ['dm', 'text']
+      }),
+      new Command({
         regex: /set log channel/,
         usage: 'set log channel',
         help: 'Sets this channel as the log channel.',

@@ -1,11 +1,11 @@
 ### INSTALLER/BUILDER
-FROM mhart/alpine-node:9.6
+FROM mhart/alpine-node:9.8
 RUN apk add --no-cache python g++ make git
 COPY . /src
 RUN cd /src && npm i
 
 ### FINAL
-FROM mhart/alpine-node:9.6
+FROM mhart/alpine-node:9.8
 WORKDIR /src
 ENV DATA_PATH /data
 

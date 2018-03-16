@@ -71,7 +71,7 @@ class UserContext {
 
   attachSC (SC) {
     this.SC = SC
-    this.GM = SC.S.members.get(this.U.id)
+    this.GM = SC.gm(this.U.id)
     this._resolvePerms()
   }
 }
