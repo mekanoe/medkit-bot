@@ -34,7 +34,7 @@ class ServerContext {
   }
 
   gm (userID) {
-    return this.S.members.get(userID) || this.S.fetchMember(userID, true)
+    return this.S.members.get(userID)
   }
 
   /// ////////////
