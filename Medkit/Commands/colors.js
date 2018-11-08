@@ -8,18 +8,28 @@ class ColorsCmd extends CommandSet {
     as(this.commands, 'colors', {perms: 3})
   }
   _boot () {
+    const getRolePosition = ({SC}) => {
+      if ('colors:marker' in SC.roles) {
+        const role = SC.S.roles.find(x => x.id === SC.roles['colors:marker'])
+        if (role != null) {
+          return role.position + 1
+        }
+      }
+      return undefined
+    }
+
     this.commands = [
       new Command({
         regex: /color ([a-zA-Z0-9 ]+) ?#?([a-fA-F0-9]{3,6})?/,
         usage: 'color red #ff0000',
         help: 'Sets a color',
         callback: async (message, matches) => {
-          console.log({matches})
+          // console.log({matches})
           matches = matches.map(x => x != null ? ('' + x).trim() : x)
           const [name, color] = matches
           
           let role = message.SC.S.roles.find(x => x.name === `${name} 🔸`)
-          console.log({name, color, hasRole: role != null})
+          // console.log({name, color, hasRole: role != null})
           if (role != null) { // role is found
             if (role.members.has(message.UC.id)) {
               message.reply(`<:akkoshrug:387846714414989312> You already have that role.`)
@@ -38,7 +48,7 @@ class ColorsCmd extends CommandSet {
               message.reply(`❗️ That role didn't exist, so I need a color to create ${name}.`)
               return
             }
-            role = await message.SC.S.createRole({ name: `${name} 🔸`, permissions: 0, color: color })
+            role = await message.SC.S.createRole({ name: `${name} 🔸`, permissions: 0, color: color, position: getRolePosition(message) })
             message.UC.GM.addRole(role)
             message.reply(`✅ Done!`)
           }
