@@ -10,7 +10,7 @@ class ColorsCmd extends CommandSet {
   _boot () {
     const getRolePosition = ({SC}) => {
       if ('colors:marker' in SC.roles) {
-        const role = SC.S.roles.find(x => x.id === SC.roles['colors:marker'])
+        const role = SC.S.roles.get(SC.roles['colors:marker'])
         if (role != null) {
           return role.position + 1
         }
@@ -48,7 +48,21 @@ class ColorsCmd extends CommandSet {
               message.reply(`❗️ That role didn't exist, so I need a color to create ${name}.`)
               return
             }
-            role = await message.SC.S.createRole({ name: `${name} 🔸`, permissions: 0, color: color, position: getRolePosition(message) })
+            role = await message.SC.S.createRole({ name: `${name} 🔸`, permissions: 0, color: color })
+            
+            try {
+              await role.setPosition(getRolePosition(message))
+            } catch (e) { // likely perms error.
+              const posRole = message.SC.S.roles.find(x => x.name.includes('🔸'))
+              if (posRole != null) {
+                try {
+                  await role.setPosition(posRole.position + 1)
+                } catch (e) {
+                  // oh well.
+                }
+              }
+            }
+            
             message.UC.GM.addRole(role)
             message.reply(`✅ Done!`)
           }
