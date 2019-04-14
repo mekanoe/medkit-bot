@@ -1,10 +1,10 @@
 ### INSTALLER/BUILDER
-FROM node:10
+FROM node:11
 COPY . /src
-RUN cd /src && npm i
+RUN cd /src && yarn
 
 ### FINAL
-FROM mhart/alpine-node:10
+FROM mhart/alpine-node:11
 WORKDIR /src
 ENV DATA_PATH /data
 RUN npm i -g pm2
