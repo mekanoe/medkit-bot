@@ -6,7 +6,7 @@ const moment = require('moment-timezone')
 // Root-level commands
 class BasicCmd extends CommandSet {
   _register (as) {
-    as(this.commands, 'basic', {perms: 3})
+    as(this.commands, 'basic', { perms: 3 })
   }
   _boot () {
     this.commands = [
@@ -36,7 +36,7 @@ class BasicCmd extends CommandSet {
         sources: ['dm', 'text']
       }),
       new Command({
-        regex: /bot/,
+        regex: /bot$/,
         hidden: true,
         callback: (message) => {
           message.reply("Hi! I'm Medkit. I'm a utility bot that fits in your slot. Sponsored by Genudine Dynamics.\n\nAsk <@62601275618889728> for more info.\n*Also see https://github.com/genudine/medkit-bot*")
