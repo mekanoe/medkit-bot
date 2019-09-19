@@ -1,12 +1,14 @@
-### INSTALLER/BUILDER
-FROM node:11
-COPY . /src
-RUN cd /src && yarn
+FROM node:12-alpine AS base
+WORKDIR /work
 
-### FINAL
-FROM mhart/alpine-node:11
-WORKDIR /src
-ENV DATA_PATH /data
-RUN npm i -g pm2
-COPY --from=0 /src /src
-CMD pm2-docker main.js
+
+FROM base AS builder
+RUN apk add --no-cache git python build-base
+COPY package.json package-lock.json ./
+RUN npm ci --production
+
+
+FROM base AS run
+COPY --from=builder /work/ /work/
+COPY . .
+CMD node main.js

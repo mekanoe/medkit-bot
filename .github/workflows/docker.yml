@@ -1,0 +1,19 @@
+on: [push]
+
+name: Docker Workflow
+
+jobs:
+  build_publish:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Build Container
+        uses: roleypoly/actions-buildkit@master
+        with:
+          tag: docker.pkg.github.com/kayteh/medkit-bot/medkit-bot:latest
+          platforms: linux/amd64,linux/arm64,linux/arm/v6
+        env:
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_USERNAME: kayteh
