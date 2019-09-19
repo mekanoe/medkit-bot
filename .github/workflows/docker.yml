@@ -17,3 +17,4 @@ jobs:
         env:
           DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_USERNAME: kayteh
+          DOCKER_REGISTRY_URL: https://docker.pkg.github.com
