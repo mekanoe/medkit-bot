@@ -1,4 +1,4 @@
-FROM node:current AS base
+FROM node:current-alpine AS base
 WORKDIR /work
 
 
