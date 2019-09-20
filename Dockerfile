@@ -1,12 +1,12 @@
-FROM node:current-alpine AS base
+FROM node:lts AS base
 WORKDIR /work
 
+FROM base as nodebuild
+RUN apt update && apt install -y git python build-essential
 
-FROM base AS builder
-RUN apk add --no-cache git python build-base
-COPY package.json package-lock.json ./
+FROM nodebuild AS builder
+COPY package*.json ./
 RUN npm ci --production
-
 
 FROM base AS run
 COPY --from=builder /work/ /work/
