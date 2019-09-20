@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Build Container
-        uses: roleypoly/actions-buildkit@master
+        uses: roleypoly/actions-buildkit@debug
         with:
           tag: docker.pkg.github.com/kayteh/medkit-bot/medkit-bot:latest
           platforms: linux/amd64,linux/arm64,linux/arm
