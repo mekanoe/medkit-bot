@@ -22,9 +22,9 @@ jobs:
 
       - name: Buildx Setup
         run: |
+          update-binfmts --enable
           $BUILDX create --name build --use
           $BUILDX inspect --bootstrap
-          update-binfmts --enable
 
       - name: Buildx Build
         run: |
