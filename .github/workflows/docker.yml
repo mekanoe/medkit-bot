@@ -9,14 +9,14 @@ jobs:
   build_publish:
     name: Build and Publish
     runs-on: ubuntu-latest
-    container:
-      image: jonoh/docker-buildx-qemu
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-      env:
-        DOCKER_CLI_EXPERIMENTAL: enabled
-        BUILDX: /root/.docker/cli-plugins/docker-buildx
-      options: --privileged
+    # container:
+    #   image: jonoh/docker-buildx-qemu
+    #   volumes:
+    #     - /var/run/docker.sock:/var/run/docker.sock
+    #   env:
+    #     DOCKER_CLI_EXPERIMENTAL: enabled
+    #     BUILDX: /root/.docker/cli-plugins/docker-buildx
+    #   options: --privileged
     steps:
       - uses: actions/checkout@v1
 
