@@ -1,5 +1,5 @@
 
-FROM node:lts-alpine AS golang-amd64
+FROM node:lts-alpine AS base
 WORKDIR /work
 
 FROM base as nodebuild
