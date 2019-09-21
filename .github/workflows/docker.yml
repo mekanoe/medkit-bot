@@ -9,12 +9,16 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Build Container
-        uses: roleypoly/actions-buildkit@debug
+      - name: Docker Login
+        uses: azure/container-actions/docker-login@master
         with:
-          tag: docker.pkg.github.com/kayteh/medkit-bot/medkit-bot:latest
-          platforms: linux/amd64,linux/arm64,linux/arm
-        env:
-          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          DOCKER_USERNAME: kayteh
-          DOCKER_REGISTRY_URL: https://docker.pkg.github.com
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Container
+        run: 
+          docker run --rm -v $HOME/.docker:/root/docker -v$(pwd):/src jonoh/docker-buildx-qemu "docker buildx build /src -t katie/medkit-bot:${{ github.sha }} --platform linux/amd64,linux/arm64,linux/arm/v7 --push"
+
+      - name: Docker Logout
+        uses: azure/container-actions/docker-logout@master
+        
