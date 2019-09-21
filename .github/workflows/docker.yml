@@ -12,6 +12,7 @@ jobs:
         - /var/run/docker.sock:/var/run/docker.sock
       env:
         DOCKER_CLI_EXPERIMENTAL: enabled
+        BUILDX: /root/.docker/cli-plugins/docker-buildx
     steps:
       - uses: actions/checkout@v1
 
@@ -21,12 +22,12 @@ jobs:
 
       - name: Buildx Setup
         run: |
-          ~/.docker/cli-plugins/docker-buildx create --name build --use
-          ~/.docker/cli-plugins/docker-buildx inspect --bootstrap
+          $BUILDX create --name build --use
+          $BUILDX inspect --bootstrap
           update-binfmts --enable
 
       - name: Buildx Build
         run: |
-          ~/.docker/cli-plugins/docker-buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --pull -t katie/medkit-bot --push .
+          $BUILDX build --platform linux/arm64,linux/arm/v7,linux/amd64 --pull -t katie/medkit-bot --push .
 
       
