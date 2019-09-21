@@ -7,7 +7,7 @@ RUN apk add --no-cache git python build-base
 
 FROM nodebuild AS builder
 COPY package*.json ./
-#RUN npm ci --production
+RUN npm ci --production
 
 FROM base AS run
 COPY --from=builder /work/ /work/
