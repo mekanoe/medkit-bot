@@ -15,9 +15,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Container
+      - name: Buildx Jobs
         run: |
-          docker run --rm -v $DOCKER_CONFIG:/root/docker -v$(pwd):/src -v/var/run/docker.sock:/var/run/docker.sock jonoh/docker-buildx-qemu docker buildx build -t katie/medkit-bot:${{ github.sha }} --platform linux/amd64,linux/arm64,linux/arm/v7 --push /src
+          docker buildx create --driver docker-container --use
+          docker buildx inspect --bootstrap
+          update-binfmts --enable
+          docker buildx build --platform linux/arm64,linux/arm/v7,linux/arm64 --pull -t katie/medkit-bot --push .
+        container:
+          image: jonoh/docker-buildx-qemu
+          env:
+            DOCKER_CONFIG: $DOCKER_CONFIG
+          volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+
+      # - name: Build Container
+      #   run: |
+      #     docker run --rm -v $DOCKER_CONFIG:/root/docker -v$(pwd):/src -v/var/run/docker.sock:/var/run/docker.sock jonoh/docker-buildx-qemu docker buildx build -t katie/medkit-bot:${{ github.sha }} --platform linux/amd64,linux/arm64,linux/arm/v7 --push /src
 
       - name: Docker Logout
         if: always()
