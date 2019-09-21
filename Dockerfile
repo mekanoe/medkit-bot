@@ -1,9 +1,5 @@
 
-FROM golang:lts-alpine AS golang-amd64
-FROM arm32v7/golang:lts-alpine as golang-arm
-FROM arm64v8/golang:lts-alpine as golang-arm64
-FROM golang-$TARGETARCH as base
-ARG TARGETARCH
+FROM node:lts-alpine AS golang-amd64
 WORKDIR /work
 
 FROM base as nodebuild
