@@ -17,8 +17,9 @@ jobs:
 
       - name: Build Container
         run: 
-          docker run --rm -v $HOME/.docker:/root/docker -v$(pwd):/src jonoh/docker-buildx-qemu "docker buildx build -t katie/medkit-bot:${{ github.sha }} --platform linux/amd64,linux/arm64,linux/arm/v7 --push /src"
+          docker run --rm -v $DOCKER_CONFIG:/root/docker -v$(pwd):/src jonoh/docker-buildx-qemu docker buildx build -t katie/medkit-bot:${{ github.sha }} --platform linux/amd64,linux/arm64,linux/arm/v7 --push /src
 
       - name: Docker Logout
+        if: always()
         uses: azure/container-actions/docker-logout@master
         
