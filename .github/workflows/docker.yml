@@ -12,14 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Build Docker Image (Push)
-        uses: roleypoly/actions-buildkit@master
-        with:
-          tag: katie/medkit-bot:latest
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
-          rootless: false
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      # - name: Build Docker Image (Push)
+      #   uses: roleypoly/actions-buildkit@master
+      #   with:
+      #     tag: katie/medkit-bot:latest
+      #     platforms: linux/amd64,linux/arm64,linux/arm/v7
+      #     rootless: 'false'
+      #   env:
+      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
+      - run: docker run -it --rm -v $PWD:/tmp/work -v $HOME/.docker:/home/user/.docker --privileged buildkit-test build --frontend dockerfile.v0 --local context=/tmp/work --local dockerfile=/tmp/work --export-cache type=local,dest=/tmp/cache,mode=max --output type=image,name=docker.pkg.github.com/kayteh/medkit-bot/medkit-bot,push=true --opt platform=linux/amd64,linux/arm64,linux/arm/v6
 
       
