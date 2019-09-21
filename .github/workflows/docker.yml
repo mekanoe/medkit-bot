@@ -10,6 +10,8 @@ jobs:
       image: jonoh/docker-buildx-qemu
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
+      env:
+        DOCKER_CLI_EXPERIMENTAL: enabled
     steps:
       - uses: actions/checkout@v1
 
@@ -19,12 +21,12 @@ jobs:
 
       - name: Buildx Setup
         run: |
-          docker buildx create --driver docker-container --use
-          docker buildx inspect --bootstrap
+          ~/.docker/cli-plugins/docker-buildx create --name build --use
+          ~/.docker/cli-plugins/docker-buildx inspect --bootstrap
           update-binfmts --enable
 
       - name: Buildx Build
         run: |
-          docker buildx build --platform linux/arm64,linux/arm/v7,linux/arm64 --pull -t katie/medkit-bot --push .
+          ~/.docker/cli-plugins/docker-buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --pull -t katie/medkit-bot --push .
 
       
