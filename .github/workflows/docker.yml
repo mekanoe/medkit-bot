@@ -29,6 +29,6 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
       - name: 
-        run: docker run --rm -v $PWD:/tmp/work -v $HOME/.docker:/home/user/.docker --privileged buildkit-test build --frontend dockerfile.v0 --local context=/tmp/work --local dockerfile=/tmp/work --export-cache type=local,dest=/tmp/cache,mode=max --output type=image,name=katie/medkit-bot:testing,push=true --opt platform=linux/amd64,linux/arm64,linux/arm/v6
+        run: docker run --rm -v $PWD:/tmp/work -v $HOME/.docker:/home/user/.docker --privileged katie/buildkit-qemu-test build --frontend dockerfile.v0 --local context=/tmp/work --local dockerfile=/tmp/work --export-cache type=local,dest=/tmp/cache,mode=max --output type=image,name=katie/medkit-bot:testing,push=true --opt platform=linux/amd64,linux/arm64,linux/arm/v6
 
       
