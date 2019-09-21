@@ -34,6 +34,6 @@ jobs:
       - name: DXT Build
         uses: roleypoly/actions/dxt@master
         with:
-          tags: katie/medkit-bot:latest
+          tag: katie/medkit-bot:latest
           push: 'true'
           platforms: linux/arm64,linux/arm/v7,linux/amd64
