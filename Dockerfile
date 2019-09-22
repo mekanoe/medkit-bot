@@ -1,9 +1,13 @@
 
-FROM node:lts-alpine AS base
+FROM node:lts AS base
 WORKDIR /work
 
 FROM base as nodebuild
-RUN apk add --no-cache git python build-base
+RUN apt-get update && apt-get install -y \
+        git \
+        python \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 FROM nodebuild AS builder
 COPY package*.json ./
