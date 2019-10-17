@@ -19,7 +19,7 @@
     "glob": "^7.1.4",
     "immutable": "^3.8.2",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.26",
+    "moment-timezone": "^0.5.27",
     "parse-duration": "^0.1.1",
     "pretty-bytes": "^4.0.2",
     "sqlite3": "^4.1.0",
