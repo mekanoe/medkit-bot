@@ -26,7 +26,7 @@
     "superagent": "^5.1.0",
     "systeminformation": "^3.47.0",
     "bufferutil": "^4.0.1",
-    "xml2js": "^0.4.22",
+    "xml2js": "^0.4.23",
     "zucc": "0.1.2"
   },
   "devDependencies": {
