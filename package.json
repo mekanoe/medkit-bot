@@ -20,7 +20,7 @@
     "immutable": "^3.8.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
-    "parse-duration": "^0.1.1",
+    "parse-duration": "^0.4.2",
     "pretty-bytes": "^4.0.2",
     "sqlite3": "^4.1.0",
     "superagent": "^5.1.0",
