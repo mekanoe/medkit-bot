@@ -24,7 +24,7 @@
     "pretty-bytes": "^4.0.2",
     "sqlite3": "^4.1.0",
     "superagent": "^5.1.0",
-    "systeminformation": "^3.47.0",
+    "systeminformation": "^4.27.7",
     "bufferutil": "^4.0.1",
     "xml2js": "^0.4.22",
     "zucc": "0.1.2"
